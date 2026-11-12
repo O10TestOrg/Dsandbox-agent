@@ -20,6 +20,13 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 - One decision at a time unless they're linked. Never more than 3.
 - Say what you know vs. what you're guessing.
 
+## Branches and commits
+
+- Every new piece of work gets its own branch off an up-to-date `main`: `feat/<topic>` or `fix/<topic>`. Do this even when your session started on another feature branch.
+- Never commit or push to a branch that already exists unless the product owner or lead names that branch. The one exception: your own open PR's branch, when you're fixing its review comments (see Reviews).
+- Run `git branch --show-current` before your first commit.
+- Commit only the files you changed for the task. Stage them by path (`git add <path>`), never `git add -A` or `git add .`. Leave unrelated working-tree edits out.
+
 ## Before you open a PR
 
 - Run all checks (see Commands). All must pass.
@@ -76,10 +83,40 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 | Types | TypeScript `strict`. No `any`. Import API types from `packages/shared`; never redefine them. |
 | API input | A zod schema per route, next to its type in `packages/shared` |
 | API errors | `{ error: { code, message } }` with the right HTTP status |
-| Tests | Vitest. At least one test per route and per pure function. |
+| Tests | Vitest, written test-first. See Test-driven development. |
 | New dependency | Allowed. Name it and the reason in the PR body. |
 | UI | Follow `project.md` §13 Design. Reuse components in `apps/web/components`. |
 | App name | `APP_NAME` from `packages/shared`. Never hardcode it. |
+
+## Test-driven development
+
+Write the test before the code, for any behavior that can break:
+
+1. Write a test for the next piece of behavior. Run it and watch it fail for the reason you expect.
+2. Write the least code that makes it pass.
+3. Refactor with the tests green. Repeat.
+
+**Fixing a bug:** first write a test that reproduces it and fails. Then fix it.
+
+**What gets a test:**
+
+| Test it | Example |
+|---|---|
+| Every API route: its success path and the errors its contract names | 401 with no session, 402 on Free, 404 for another owner's project |
+| Owner scoping | Another user's ID returns 404, never their data |
+| Plan and quota limits, including two requests at once | The 2nd project on Free is refused; the 101st message is refused |
+| Functions with real logic | Chunking, plan-applied widget config, Stripe event → plan |
+| Migrations and query functions | On pglite |
+
+**What doesn't get a test.** Every test must be able to fail for a real bug. Skip tests that:
+
+- Restate the types, or check a constant equals itself
+- Test a library instead of our code (Drizzle, Better Auth, Stripe's SDK, Next.js routing)
+- Snapshot markup or check CSS. Check UI and styling on the Vercel preview instead.
+- Repeat a case another test already covers
+- Only exist to raise coverage
+
+Test behavior through the public interface (the route, the exported function), not internals. A refactor that doesn't change behavior shouldn't break a test.
 
 ## Commands
 
