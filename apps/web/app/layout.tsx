@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: APP_NAME,
-  description: "AI support chat for any website.",
+  description: "An AI support chat widget for any website.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
