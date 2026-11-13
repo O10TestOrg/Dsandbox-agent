@@ -9,11 +9,12 @@
     "lint": "eslint .",
     "test": "vitest run",
     "build": "pnpm -r build",
-    "db:generate": "echo \"not set up yet (Phase 1)\"",
-    "db:migrate": "echo \"not set up yet (Phase 1)\""
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9.0.0",
     "globals": "^16.0.0",
     "typescript": "^5.6.0",

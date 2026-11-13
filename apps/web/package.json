@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@askwell/db": "workspace:*",
     "@askwell/shared": "workspace:*",
     "next": "^16.4.6",
     "react": "^19.3.1",
