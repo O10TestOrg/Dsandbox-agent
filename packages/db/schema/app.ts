@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -8,6 +9,7 @@ import {
   pgTable,
   text,
   timestamp,
+  unique,
   vector,
   boolean,
 } from "drizzle-orm/pg-core";
@@ -64,7 +66,11 @@ export const knowledgeSources = pgTable(
     status: knowledgeStatusEnum("status").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
-  (t) => [index("knowledge_sources_project_id_idx").on(t.projectId)],
+  (t) => [
+    index("knowledge_sources_project_id_idx").on(t.projectId),
+    // Target of the composite FK from knowledge_chunks: a chunk and its source share one project.
+    unique("knowledge_sources_id_project_id_unique").on(t.id, t.projectId),
+  ],
 );
 
 export const knowledgeChunks = pgTable(
@@ -74,13 +80,16 @@ export const knowledgeChunks = pgTable(
     projectId: text("project_id")
       .notNull()
       .references(() => projects.id, { onDelete: "cascade" }),
-    sourceId: text("source_id")
-      .notNull()
-      .references(() => knowledgeSources.id, { onDelete: "cascade" }),
+    sourceId: text("source_id").notNull(),
     content: text("content").notNull(),
     embedding: vector("embedding", { dimensions: EMBEDDING_DIMENSIONS }).notNull(),
   },
   (t) => [
+    foreignKey({
+      name: "knowledge_chunks_source_project_fk",
+      columns: [t.sourceId, t.projectId],
+      foreignColumns: [knowledgeSources.id, knowledgeSources.projectId],
+    }).onDelete("cascade"),
     index("knowledge_chunks_project_id_idx").on(t.projectId),
     index("knowledge_chunks_source_id_idx").on(t.sourceId),
     index("knowledge_chunks_embedding_idx").using("hnsw", t.embedding.op("vector_cosine_ops")),

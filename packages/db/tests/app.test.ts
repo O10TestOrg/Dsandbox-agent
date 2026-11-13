@@ -73,6 +73,13 @@ describe("app tables (pglite)", () => {
     ).rejects.toThrow();
   });
 
+  it("rejects a chunk whose source belongs to another project", async () => {
+    await db.insert(projects).values({ id: "p2", ownerId: "u1", name: "Q", publicKey: "pk_2" });
+    await expect(
+      db.insert(knowledgeChunks).values({ id: "cx", projectId: "p2", sourceId: "s1", content: "x", embedding: vec(3) }),
+    ).rejects.toThrow();
+  });
+
   it("finds the nearest chunk by cosine distance", async () => {
     const q = vec(1);
     const rows = await db

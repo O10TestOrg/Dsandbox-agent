@@ -1,5 +1,5 @@
 {
-  "id": "1f02ba54-ebca-4263-802e-f3955cfcba74",
+  "id": "d093d6fc-3847-4b88-b837-5c7763edf35a",
   "prevId": "cba275f1-79a9-4856-be1a-889e879ad987",
   "version": "7",
   "dialect": "postgresql",
@@ -269,15 +269,17 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "knowledge_chunks_source_id_knowledge_sources_id_fk": {
-          "name": "knowledge_chunks_source_id_knowledge_sources_id_fk",
+        "knowledge_chunks_source_project_fk": {
+          "name": "knowledge_chunks_source_project_fk",
           "tableFrom": "knowledge_chunks",
           "tableTo": "knowledge_sources",
           "columnsFrom": [
-            "source_id"
+            "source_id",
+            "project_id"
           ],
           "columnsTo": [
-            "id"
+            "id",
+            "project_id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -372,7 +374,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "knowledge_sources_id_project_id_unique": {
+          "name": "knowledge_sources_id_project_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id",
+            "project_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
