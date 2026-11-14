@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { APP_NAME } from "@askwell/shared";
+import { Container } from "../../components/Container";
 import { DashboardNav } from "../../components/DashboardNav";
 import { StorageNotice } from "../../components/StorageNotice";
 import { getDemoName } from "../../lib/demo-session";
@@ -13,11 +14,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const name = await getDemoName();
   if (!name) redirect("/sign-in");
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen bg-paper text-ink">
       <DashboardNav name={name} appName={APP_NAME} />
-      <main className="mx-auto w-full max-w-5xl space-y-4 px-5 py-6 sm:px-8">
-        <StorageNotice />
-        {children}
+      <main>
+        <Container className="space-y-4 py-6">
+          <StorageNotice />
+          {children}
+        </Container>
       </main>
     </div>
   );

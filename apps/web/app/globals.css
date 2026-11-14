@@ -1,93 +1,161 @@
 @import "tailwindcss";
 
 /*
- * Design tokens (project.md §13). Every page uses these; no one-off colors.
- * Two surfaces: light (dashboard, default) and dark (landing, add class "theme-dark").
+ * Design tokens (docs/DESIGN.md §2). Every page and component uses these; never hard-code a value.
+ * Light is the default (dashboard, sign-in). Add class "theme-dark" to re-scope the same tokens (landing).
  */
 :root {
-  --surface: #f5f5f5;
-  --surface-raised: rgb(255 255 255 / 0.7);
-  --ink: #0a0a0a;
-  --ink-muted: rgb(10 10 10 / 0.6);
-  --line: rgb(10 10 10 / 0.12);
-  --accent: #0a0a0a;
-  --accent-ink: #ffffff;
-  --focus: #0a0a0a;
-  --danger: #b91c1c;
+  /* Colour: warm ink on white, a soft tint for grouping, muted grey for secondary text, a hairline. */
+  --paper: #ffffff;
+  --surface: #f6f5f3;
+  --ink: #1c1b19;
+  --muted: #6b6862;
+  --line: #e6e4df;
+
+  /* Colour as signal only (glyphs and dots, never text). Dusty tones, at least 3:1 on paper and surface. */
+  --success: #4f7a5a;
+  --warning: #9a7330;
+  --danger: #a5524a;
+  --info: #4f6d8f;
+
+  /* Spacing: grow at each breakpoint. */
+  --gutter: 1.25rem;
+  --section-space: 3rem;
+
+  /* Motion: one curve, one duration. */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --duration: 200ms;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: 2rem;
+    --section-space: 4.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --gutter: 3rem;
+    --section-space: 6rem;
+  }
 }
 
 .theme-dark {
-  --surface: #000000;
-  --surface-raised: rgb(255 255 255 / 0.06);
-  --ink: #ffffff;
-  --ink-muted: rgb(255 255 255 / 0.65);
-  --line: rgb(255 255 255 / 0.14);
-  --accent: #ffffff;
-  --accent-ink: #000000;
-  --focus: #ffffff;
-  --danger: #fca5a5;
+  --paper: #141312;
+  --surface: #1f1e1c;
+  --ink: #f4f2ee;
+  --muted: #a19d96;
+  --line: #2f2d2a;
+  --success: #8fb89a;
+  --warning: #d2ad6e;
+  --danger: #d9958c;
+  --info: #93acc8;
 }
 
 @theme inline {
+  --color-paper: var(--paper);
   --color-surface: var(--surface);
-  --color-raised: var(--surface-raised);
   --color-ink: var(--ink);
-  --color-muted: var(--ink-muted);
+  --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --spacing-gutter: var(--gutter);
+  --spacing-section: var(--section-space);
+
+  --ease-standard: var(--ease);
+  --default-transition-duration: var(--duration);
+  --default-transition-timing-function: var(--ease);
 }
 
 @theme {
-  --radius-card: 1.25rem;
-  --radius-control: 0.75rem;
-  --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.25);
-  --blur-glass: 16px;
+  /* Type scale: caption, body, heading, display. Large sizes are fluid. One weight. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.4;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-heading: clamp(1.375rem, 1.1rem + 1.2vw, 1.875rem);
+  --text-heading--line-height: 1.25;
+  --text-display: clamp(2.25rem, 1.4rem + 3.8vw, 4rem);
+  --text-display--line-height: 1.1;
+  --tracking-eyebrow: 0.12em;
+
+  /* Radius: square surfaces, pill buttons. Nothing in between. */
+  --radius-square: 0;
+  --radius-pill: 9999px;
+
+  /* Containers: page (wide) and prose (reading). */
+  --container-page: 72rem;
+  --container-reading: 40rem;
+
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-body {
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--font-sans);
-}
-
-/*
- * One keyboard focus ring for every link, button and input, on both surfaces.
- * Outline (not box-shadow) so it survives Windows forced-colors mode.
- * In the base layer so a component can still override it with a utility.
- */
 @layer base {
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+  }
+
+  /* One weight everywhere. The key fact in a sentence is emphasised by colour (ink on muted), not weight. */
+  h1, h2, h3, h4, h5, h6, b, strong, th {
+    font-weight: 400;
+  }
+
+  strong {
+    color: var(--ink);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
   /* Set the color up front so `transition` doesn't fade the ring in from currentColor. */
   * {
-    outline-color: var(--focus);
+    outline-color: var(--ink);
   }
 
+  /* One keyboard focus ring: 2px ink, 3px offset. Outline survives Windows forced-colors mode. */
   :focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
   }
 }
 
-/* Motion: CSS only, off for reduced-motion users. */
-@keyframes rise-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Motion: a fade only, never sliding. Off for reduced-motion users. */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .enter { animation: rise-in 0.7s ease-out both; }
-  .enter-2 { animation: rise-in 0.7s ease-out 0.12s both; }
-  .enter-3 { animation: rise-in 0.7s ease-out 0.24s both; }
+  .enter { animation: fade-in 0.6s var(--ease) both; }
+  .enter-2 { animation: fade-in 0.6s var(--ease) 0.1s both; }
+  .enter-3 { animation: fade-in 0.6s var(--ease) 0.2s both; }
 
   @supports (animation-timeline: view()) {
     .reveal {
-      animation: rise-in linear both;
+      animation: fade-in linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 40%;
     }
+  }
+}
+
+/* Reduced motion: keep state fades but make them near-instant. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration: 1ms;
   }
 }

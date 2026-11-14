@@ -4,7 +4,8 @@ import { useState } from "react";
 import { DEMO_MESSAGE_MAX_CHARS } from "@askwell/shared";
 import { sendMessage, suggestedQuestions, validateMessage } from "../lib/try-bot";
 import { useDemoStore } from "../lib/use-demo-store";
-import { GlassCard } from "./GlassCard";
+import { buttonClass } from "./Button";
+import { Surface } from "./Surface";
 
 export function TryBotPanel({ projectId }: { projectId: string }) {
   const store = useDemoStore();
@@ -51,22 +52,22 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
 
   if (!project) {
     return (
-      <GlassCard className="p-8 text-center">
-        <h2 className="text-lg font-semibold">Project not found</h2>
+      <Surface className="p-8 text-center">
+        <h2 className="text-lg">Project not found</h2>
         <p className="mt-1 text-sm text-muted">It may have been deleted.</p>
-      </GlassCard>
+      </Surface>
     );
   }
 
   return (
-    <GlassCard className="flex flex-col">
+    <Surface className="flex flex-col">
       <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
         <p className="min-w-0 truncate text-sm text-muted">Chatting with {project.name}</p>
         <button
           type="button"
           onClick={newChat}
           disabled={typing}
-          className="inline-flex min-h-10 shrink-0 items-center rounded-control border border-line px-3 py-1.5 text-sm hover:bg-raised disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
+          className={`shrink-0 ${buttonClass("secondary")}`}
         >
           New chat
         </button>
@@ -82,7 +83,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
                   key={q}
                   type="button"
                   onClick={() => setDraft(q)}
-                  className="min-h-10 rounded-full border border-line px-3 py-1.5 text-sm hover:bg-raised focus-visible:outline-2 focus-visible:outline-focus"
+                  className="min-h-12 rounded-pill border border-line px-3 py-1.5 text-sm hover:bg-surface"
                 >
                   {q}
                 </button>
@@ -95,8 +96,8 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
             return (
               <div key={m.id} className={`flex ${visitor ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap break-words rounded-card px-4 py-2.5 text-sm ${
-                    visitor ? "bg-accent text-accent-ink" : "border border-line bg-raised"
+                  className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-sm ${
+                    visitor ? "bg-ink text-paper" : "border border-line bg-surface"
                   }`}
                 >
                   {m.body}
@@ -107,7 +108,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
         )}
         {typing && (
           <div className="flex justify-start">
-            <div className="rounded-card border border-line bg-raised px-4 py-2.5 text-sm text-muted">
+            <div className="rounded-square border border-line bg-surface px-4 py-2.5 text-sm text-muted">
               <span className="sr-only">The bot is typing</span>
               <span aria-hidden="true" className="animate-pulse motion-reduce:animate-none">
                 …
@@ -137,12 +138,12 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
             }}
             placeholder="Ask your bot something…"
             autoComplete="off"
-            className="min-h-10 min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-focus"
+            className="min-h-12 min-w-0 flex-1 rounded-square border border-line bg-surface px-3 py-2 text-sm"
           />
           <button
             type="submit"
             disabled={typing || !valid}
-            className="min-h-10 shrink-0 rounded-control bg-accent px-5 py-2 text-sm font-medium text-accent-ink hover:opacity-90 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
+            className={`shrink-0 ${buttonClass("primary")}`}
           >
             Send
           </button>
@@ -156,6 +157,6 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
           </p>
         </div>
       </form>
-    </GlassCard>
+    </Surface>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { PLAN_LIMITS } from "@askwell/shared";
-import { GlassCard } from "../../../../../components/GlassCard";
+import { Surface } from "../../../../../components/Surface";
 import { usagePercent } from "../../../../../lib/usage";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
 
@@ -17,10 +17,10 @@ export function UsagePanel({ projectId }: { projectId: string }) {
   const percent = usagePercent(used, FREE_LIMIT);
 
   return (
-    <GlassCard className="space-y-4 p-6">
+    <Surface className="space-y-4 p-6">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-sm font-medium text-muted">Messages this month</h2>
-        <p className="text-2xl font-semibold tabular-nums">
+        <h2 className="text-sm text-muted">Messages this month</h2>
+        <p className="text-2xl tabular-nums">
           {fmt.format(used)} / {fmt.format(FREE_LIMIT)}
         </p>
       </div>
@@ -31,10 +31,10 @@ export function UsagePanel({ projectId }: { projectId: string }) {
         aria-valuemax={100}
         aria-valuenow={percent}
         aria-valuetext={`${fmt.format(used)} of ${fmt.format(FREE_LIMIT)} messages`}
-        className="h-3 w-full overflow-hidden rounded-full bg-line"
+        className="h-3 w-full overflow-hidden rounded-pill bg-line"
       >
         <div
-          className="h-full w-full origin-left bg-accent transition-transform motion-reduce:transition-none"
+          className="h-full w-full origin-left bg-ink transition-transform motion-reduce:transition-none"
           style={{ transform: `scaleX(${percent / 100})` }}
         />
       </div>
@@ -42,6 +42,6 @@ export function UsagePanel({ projectId }: { projectId: string }) {
         This project is on the Free plan. This is a demo: nothing is charged and no messages are blocked, even over the
         limit.
       </p>
-    </GlassCard>
+    </Surface>
   );
 }

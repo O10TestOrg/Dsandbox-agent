@@ -2,10 +2,11 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import type { DemoKnowledgeSourceType } from "@askwell/shared";
-import { PRIMARY_BUTTON } from "./Button";
+import { buttonClass } from "./Button";
+import { SignalMessage } from "./Signal";
 import { FILE_ACCEPT, FILE_REJECTED_MESSAGE, parseSourceTitle, sourceTypeFromFileName } from "../lib/knowledge";
 
-const input = "mt-1 w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink";
+const input = "mt-1 min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink";
 
 type Add = (source: { title: string; type: DemoKnowledgeSourceType }) => void;
 
@@ -43,37 +44,37 @@ export function KnowledgeAddForm({ onAdd }: { onAdd: Add }) {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <form onSubmit={addText} noValidate className="space-y-3">
-        <h2 className="font-semibold">Paste text</h2>
-        <label className="block text-sm font-medium">
+        <h2 className="">Paste text</h2>
+        <label className="block text-sm">
           Title
           <input name="title" type="text" autoComplete="off" className={input} />
         </label>
-        <label className="block text-sm font-medium">
+        <label className="block text-sm">
           Text
           <textarea name="text" rows={4} className={input} />
         </label>
         {textError ? (
-          <p role="alert" className="text-sm text-danger">
+          <SignalMessage tone="danger" role="alert">
             {textError}
-          </p>
+          </SignalMessage>
         ) : null}
-        <button type="submit" className={PRIMARY_BUTTON}>
+        <button type="submit" className={buttonClass("primary")}>
           Add text
         </button>
       </form>
       <form onSubmit={addFile} noValidate className="space-y-3">
-        <h2 className="font-semibold">Upload a file</h2>
-        <label className="block text-sm font-medium">
+        <h2 className="">Upload a file</h2>
+        <label className="block text-sm">
           File (.pdf, .md or .txt)
           <input ref={fileRef} type="file" accept={FILE_ACCEPT} className={input} />
         </label>
         <p className="text-sm text-muted">Only the file name is kept. The file is never read or uploaded.</p>
         {fileError ? (
-          <p role="alert" className="text-sm text-danger">
+          <SignalMessage tone="danger" role="alert">
             {fileError}
-          </p>
+          </SignalMessage>
         ) : null}
-        <button type="submit" className={PRIMARY_BUTTON}>
+        <button type="submit" className={buttonClass("primary")}>
           Add file
         </button>
       </form>

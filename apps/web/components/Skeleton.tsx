@@ -3,7 +3,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse rounded-control bg-line motion-reduce:animate-[pulse_3s_ease-in-out_infinite] ${className}`}
+      className={`animate-pulse rounded-square bg-line motion-reduce:animate-[pulse_3s_ease-in-out_infinite] ${className}`}
     />
   );
 }

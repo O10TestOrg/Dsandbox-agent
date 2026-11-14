@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { GHOST_BUTTON, PRIMARY_BUTTON } from "./Button";
+import { buttonClass } from "./Button";
+import { SignalMessage } from "./Signal";
 import { parseProjectName } from "../lib/project-name";
 
 /** One name field with a submit button. Used for "New project" and "Rename". The name renders as text only. */
@@ -45,18 +46,18 @@ export function ProjectForm({
           placeholder="Project name"
           autoComplete="off"
           aria-invalid={error ? true : undefined}
-          className="w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink"
+          className="min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink"
         />
         {error ? (
-          <p role="alert" className="mt-1 text-sm text-danger">
+          <SignalMessage tone="danger" role="alert" className="mt-1">
             {error}
-          </p>
+          </SignalMessage>
         ) : null}
       </div>
       <div className="flex gap-2">
         <button
           type="submit"
-          className={PRIMARY_BUTTON}
+          className={buttonClass("primary")}
         >
           {submitLabel}
         </button>
@@ -64,7 +65,7 @@ export function ProjectForm({
           <button
             type="button"
             onClick={onCancel}
-            className={`${GHOST_BUTTON} py-2.5`}
+            className={buttonClass("quiet")}
           >
             Cancel
           </button>

@@ -12,7 +12,7 @@ export function ConversationThread({ projectId, conversationId }: { projectId: s
 
   return (
     <section className="space-y-4">
-      <Link href={back} className="inline-flex min-h-10 items-center text-sm text-muted underline-offset-4 hover:underline">
+      <Link href={back} className="inline-flex min-h-12 items-center text-sm text-muted underline-offset-4 hover:underline">
         ← Back to conversations
       </Link>
       {!conversation ? (
@@ -21,7 +21,7 @@ export function ConversationThread({ projectId, conversationId }: { projectId: s
         </EmptyState>
       ) : (
         <>
-          <h1 className="text-2xl font-semibold tracking-tight">Conversation</h1>
+          <h1 className="text-2xl tracking-tight">Conversation</h1>
           {conversation.messages.length === 0 ? (
             <EmptyState title="No messages">This conversation is empty.</EmptyState>
           ) : (
@@ -31,8 +31,8 @@ export function ConversationThread({ projectId, conversationId }: { projectId: s
                 return (
                   <li key={m.id} className={`flex flex-col ${visitor ? "items-start" : "items-end"}`}>
                     <div
-                      className={`max-w-[85%] whitespace-pre-wrap break-words rounded-card px-4 py-2.5 text-sm ${
-                        visitor ? "border border-line bg-raised" : "bg-accent text-accent-ink"
+                      className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-sm ${
+                        visitor ? "border border-line bg-surface" : "bg-ink text-paper"
                       }`}
                     >
                       {m.body}

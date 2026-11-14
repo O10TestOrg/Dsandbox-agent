@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ projectId: st
   const { projectId } = await params;
   return (
     <section className="space-y-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Try your bot</h1>
+      <h1 className="text-2xl tracking-tight">Try your bot</h1>
       <TryBotPanel projectId={projectId} />
     </section>
   );

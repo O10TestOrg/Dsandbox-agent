@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { EmptyState } from "../../../components/EmptyState";
-import { GlassCard } from "../../../components/GlassCard";
+import { MetaText } from "../../../components/Text";
+import { Surface } from "../../../components/Surface";
 import { ProjectForm } from "../../../components/ProjectForm";
 import { LoadingScreen, Skeleton } from "../../../components/Skeleton";
 import { useDemoStore } from "../../../lib/use-demo-store";
@@ -18,14 +19,14 @@ export default function ProjectsPage() {
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+      <h1 className="text-2xl tracking-tight">Projects</h1>
       <ProjectForm submitLabel="New project" onSubmit={(name) => createProject(name)} />
       {!hydrated ? (
         <LoadingScreen>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((i) => (
               <li key={i}>
-                <Skeleton className="h-28 rounded-card" />
+                <Skeleton className="h-28 rounded-square" />
               </li>
             ))}
           </ul>
@@ -37,11 +38,11 @@ export default function ProjectsPage() {
           {projects.map((project) => (
             <li key={project.id}>
               <Link href={`/dashboard/projects/${encodeURIComponent(project.id)}`} className="block">
-                <GlassCard className="p-5 transition hover:bg-raised">
-                  <h2 className="break-words font-semibold">{project.name}</h2>
-                  <p className="mt-1 text-sm text-muted">Created {formatDate(project.createdAt)}</p>
+                <Surface className="p-5 transition hover:bg-surface">
+                  <h2 className="break-words">{project.name}</h2>
+                  <MetaText className="mt-1 block">Created {formatDate(project.createdAt)}</MetaText>
                   <p className="mt-3 text-sm">{project.messagesUsed.toLocaleString("en-US")} messages used</p>
-                </GlassCard>
+                </Surface>
               </Link>
             </li>
           ))}

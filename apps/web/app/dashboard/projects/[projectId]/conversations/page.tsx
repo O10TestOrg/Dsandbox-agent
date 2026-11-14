@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ projectId: st
   const { projectId } = await params;
   return (
     <section className="space-y-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Conversations</h1>
+      <h1 className="text-2xl tracking-tight">Conversations</h1>
       <ConversationList projectId={projectId} />
     </section>
   );

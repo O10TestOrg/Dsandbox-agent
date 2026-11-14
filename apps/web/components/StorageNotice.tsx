@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { Notice } from "./Signal";
 import { PROBE_KEY, canSaveToStorage } from "./storage-available";
 
 // Storage can be blocked or unblocked while the page is open (site settings, another tab). Re-check then.
@@ -27,8 +28,8 @@ export function StorageNotice() {
   const canSave = useSyncExternalStore(subscribe, check, () => true);
   if (canSave) return null;
   return (
-    <p role="status" className="rounded-control border border-line bg-raised px-3 py-2 text-sm">
+    <Notice tone="warning" role="status">
       Your browser is blocking storage, so changes won&apos;t be saved. The demo still works until you close this tab.
-    </p>
+    </Notice>
   );
 }

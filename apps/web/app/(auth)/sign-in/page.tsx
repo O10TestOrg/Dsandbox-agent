@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "../../../components/Link";
 import { redirect } from "next/navigation";
 import { APP_NAME } from "@askwell/shared";
 import { AuthCard } from "../../../components/AuthCard";
@@ -19,7 +19,7 @@ export default async function SignInPage() {
       footer={
         <>
           No account yet?{" "}
-          <Link href="/sign-up" className="inline-flex min-h-10 items-center text-ink underline">
+          <Link href="/sign-up" className="inline-flex min-h-12 items-center text-ink">
             Sign up
           </Link>
         </>
