@@ -93,7 +93,7 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
       {open ? (
         <div id={menuId} className="border-t border-line md:hidden">
           <Container className="flex flex-col items-start gap-1 py-4">
-            <MetaText className="truncate">Signed in as {name}</MetaText>
+            <MetaText className="block max-w-full truncate">Signed in as {name}</MetaText>
             <nav aria-label="Dashboard" className="flex flex-col">
               {LINKS.map((link) => (
                 <Link key={link.href} href={link.href} variant="nav" current={isCurrent(link.href)}>
