@@ -12,6 +12,13 @@ const PATHS = {
   "sign-out": "M10 4H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4 M15 8l4 4-4 4 M19 12H9",
   trash: "M5 7h14 M10 7V4.5h4V7 M7 7l1 13h8l1-13",
   send: "M5 12h13 M13 6l6 6-6 6",
+  "chevron-down": "M6 9l6 6 6-6",
+  selector: "M8 9l4-4 4 4 M8 15l4 4 4-4",
+  folder: "M3.5 7a1 1 0 0 1 1-1h4.5l2 2h8.5a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z",
+  document: "M6.5 3.5h7l4 4v13h-11z M13.5 3.5v4h4 M9.5 12h5 M9.5 15.5h5",
+  conversation: "M4.5 5.5h15v10h-9l-4 3.5v-3.5h-2z",
+  play: "M8 5.5v13l10.5-6.5z",
+  chart: "M5 19.5v-7 M12 19.5v-14 M19 19.5v-9",
 } as const;
 
 export type IconName = keyof typeof PATHS;
