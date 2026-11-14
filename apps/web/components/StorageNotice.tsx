@@ -3,7 +3,17 @@
 import { useSyncExternalStore } from "react";
 import { canSaveToStorage } from "./storage-available";
 
-const subscribe = () => () => undefined;
+// Storage can be blocked or unblocked while the page is open (site settings, another tab). Re-check then.
+function subscribe(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener("focus", onChange);
+  document.addEventListener("visibilitychange", onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener("focus", onChange);
+    document.removeEventListener("visibilitychange", onChange);
+  };
+}
 const check = () => canSaveToStorage(() => window.localStorage);
 
 /** Small notice when the browser blocks storage. The demo keeps working for the session, but nothing is saved. */
