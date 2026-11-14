@@ -93,6 +93,10 @@ export function DashboardNav({
           setOpen(false);
           menuButton.current?.focus();
         }}
+        // Any link closes the drawer, including one to the page already open (the path doesn't change then).
+        onClick={(event) => {
+          if ((event.target as Element).closest("a[href]")) setOpen(false);
+        }}
         className="m-0 h-dvh max-h-none w-full max-w-none bg-paper p-0 text-ink md:hidden"
       >
         <div className="flex min-h-16 items-center justify-between border-b border-line px-gutter">

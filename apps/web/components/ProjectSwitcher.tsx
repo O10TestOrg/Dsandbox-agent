@@ -92,7 +92,14 @@ export function ProjectSwitcher({ className = "" }: { className?: string }) {
         <Icon name="selector" className="text-muted" />
       </button>
       {open ? (
-        <ul id={listId} className="absolute left-0 top-full z-20 mt-1 w-64 max-w-[calc(100vw-2.5rem)] border border-line bg-paper py-1">
+        <ul
+          id={listId}
+          // Never taller than the space below the top bar: a long list scrolls inside itself.
+          className="absolute left-0 top-full z-20 mt-1 max-h-[calc(100dvh-6rem)] w-64 max-w-[calc(100vw-2.5rem)] overflow-y-auto border border-line bg-paper py-1"
+          onClick={(event) => {
+            if ((event.target as Element).closest("a[href]")) setOpen(false);
+          }}
+        >
           {projects.map((p) => (
             <li key={p.id}>
               <NextLink
