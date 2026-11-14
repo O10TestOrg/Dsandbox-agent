@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { PROJECT_NAME_MAX, parseProjectName } from "../lib/project-name";
+import { parseProjectName } from "../lib/project-name";
 
 /** One name field with a submit button. Used for "New project" and "Rename". The name renders as text only. */
 export function ProjectForm({
@@ -42,7 +42,6 @@ export function ProjectForm({
           type="text"
           defaultValue={initialName}
           placeholder="Project name"
-          maxLength={PROJECT_NAME_MAX + 20}
           autoComplete="off"
           aria-invalid={error ? true : undefined}
           className="w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink"
