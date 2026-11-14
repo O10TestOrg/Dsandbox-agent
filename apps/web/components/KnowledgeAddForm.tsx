@@ -7,6 +7,7 @@ import { INPUT, LABEL } from "./field";
 import { Eyebrow } from "./Text";
 import { SignalMessage } from "./Signal";
 import { FILE_ACCEPT, FILE_REJECTED_MESSAGE, parseSourceTitle, sourceTypeFromFileName } from "../lib/knowledge";
+import { formText } from "../lib/form-text";
 
 
 type Add = (source: { title: string; type: DemoKnowledgeSourceType }) => void;
@@ -21,9 +22,9 @@ export function KnowledgeAddForm({ onAdd }: { onAdd: Add }) {
     event.preventDefault();
     const form = event.currentTarget;
     const data = new FormData(form);
-    const title = parseSourceTitle(String(data.get("title") ?? ""));
+    const title = parseSourceTitle(formText(data, "title"));
     if (!title.ok) return setTextError(title.error);
-    if (!String(data.get("text") ?? "").trim()) return setTextError("Paste some text.");
+    if (!formText(data, "text").trim()) return setTextError("Paste some text.");
     setTextError(null);
     onAdd({ title: title.title, type: "text" });
     form.reset();

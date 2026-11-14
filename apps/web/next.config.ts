@@ -6,8 +6,8 @@ import type { NextConfig } from "next";
  */
 const nextConfig: NextConfig = {
   transpilePackages: ["@askwell/shared"],
-  async headers() {
-    return [
+  headers() {
+    return Promise.resolve([
       {
         source: "/:path*",
         headers: [
@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
-    ];
+    ]);
   },
 };
 

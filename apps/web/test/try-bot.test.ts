@@ -9,8 +9,8 @@ const coffee = "demo-coffee";
 
 describe("validateMessage", () => {
   it("rejects empty and whitespace-only input", () => {
-    expect(validateMessage("")).toEqual({ ok: false, error: expect.any(String) });
-    expect(validateMessage("   \n ")).toEqual({ ok: false, error: expect.any(String) });
+    expect(validateMessage("")).toEqual({ ok: false, error: expect.any(String) as string });
+    expect(validateMessage("   \n ")).toEqual({ ok: false, error: expect.any(String) as string });
   });
 
   it("rejects 1,001 characters and accepts exactly 1,000", () => {
@@ -91,7 +91,10 @@ describe("sendMessage", () => {
 
   it("fails when the demo is reset while the bot is typing", async () => {
     const store = makeStore();
-    const result = await sendMessage(store, { projectId: coffee, conversationId: null, text: "hours?" }, async () => store.reset());
+    const result = await sendMessage(store, { projectId: coffee, conversationId: null, text: "hours?" }, () => {
+      store.reset();
+      return Promise.resolve();
+    });
     expect(result.ok).toBe(false);
   });
 

@@ -76,7 +76,7 @@ export function ProjectSwitcher({ className = "" }: { className?: string }) {
       className={`relative ${className}`}
       onKeyDown={onKeyDown}
       onBlur={(event) => {
-        if (!root.current?.contains(event.relatedTarget as Node | null)) setOpen(false);
+        if (!root.current?.contains(event.relatedTarget)) setOpen(false);
       }}
     >
       <button
