@@ -1,34 +1,55 @@
-import Link from "next/link";
+import NextLink from "next/link";
 
-type Variant = "primary" | "ghost" | "text";
+export type ButtonVariant = "primary" | "secondary" | "quiet";
 
-const styles: Record<Variant, string> = {
-  primary: "bg-accent text-accent-ink hover:opacity-90",
-  ghost: "border border-line text-ink hover:bg-raised",
-  text: "text-muted hover:text-ink",
+const base =
+  "inline-flex min-h-12 items-center justify-center gap-2 rounded-pill px-6 text-body transition-colors disabled:pointer-events-none disabled:opacity-40 aria-disabled:pointer-events-none aria-disabled:opacity-40";
+
+const looks: Record<ButtonVariant, string> = {
+  primary: "bg-ink text-paper hover:opacity-85",
+  secondary: "border border-ink text-ink hover:bg-surface",
+  quiet: "text-muted hover:bg-surface hover:text-ink",
 };
 
-/** Class strings for native <button>s that match <Button>. Shared so every screen looks the same. */
-export const PRIMARY_BUTTON =
-  "inline-flex min-h-10 items-center justify-center rounded-control bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90";
-export const GHOST_BUTTON =
-  "inline-flex min-h-10 items-center justify-center rounded-control border border-line px-3 py-2 text-sm transition hover:bg-raised";
+/** Class string for anything that should look like a button. Prefer <Button> and <ButtonLink>. */
+export function buttonClass(variant: ButtonVariant = "primary"): string {
+  return `${base} ${looks[variant]}`;
+}
 
-export function Button({
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: ButtonVariant;
+  /** Shows the loading state: disabled, and announced as busy. */
+  loading?: boolean;
+};
+
+/** One primary action per view. Defaults to type="button" so it never submits a form by accident. */
+export function Button({ variant = "primary", loading = false, className = "", type = "button", disabled, ...rest }: ButtonProps) {
+  return (
+    <button
+      type={type}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      className={`${buttonClass(variant)} ${className}`}
+      {...rest}
+    />
+  );
+}
+
+/** A link that looks like a button. */
+export function ButtonLink({
   href,
   children,
   variant = "primary",
+  className = "",
 }: {
   href: string;
   children: React.ReactNode;
-  variant?: Variant;
+  variant?: ButtonVariant;
+  className?: string;
 }) {
   return (
-    <Link
-      href={href}
-      className={`inline-flex items-center justify-center rounded-control px-5 py-3 text-sm font-medium transition ${styles[variant]}`}
-    >
+    <NextLink href={href} className={`${buttonClass(variant)} ${className}`}>
       {children}
-    </Link>
+    </NextLink>
   );
 }

@@ -4,23 +4,23 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { demoSignOut } from "../app/(auth)/actions";
 import { useDemoStore } from "../lib/use-demo-store";
-import { GHOST_BUTTON } from "./Button";
-import { GlassCard } from "./GlassCard";
+import { buttonClass } from "./Button";
+import { Surface } from "./Surface";
 
 const LINKS = [
   { href: "/dashboard/projects", label: "Projects" },
 ];
 
-const small = `shrink-0 ${GHOST_BUTTON}`;
+const small = `shrink-0 ${buttonClass("quiet")}`;
 
 export function DashboardNav({ name, appName }: { name: string; appName: string }) {
   const pathname = usePathname();
   const { reset } = useDemoStore();
   return (
     <header className="sticky top-0 z-10 p-3 sm:p-4">
-      <GlassCard className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
+      <Surface className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="inline-flex min-h-10 items-center font-semibold tracking-tight">
+          <Link href="/dashboard" className="inline-flex min-h-12 items-center tracking-tight">
             {appName}
           </Link>
           <span className="truncate text-sm text-muted md:hidden">{name}</span>
@@ -33,8 +33,8 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-10 shrink-0 items-center rounded-control px-3 py-2 text-sm transition ${
-                  active ? "bg-accent text-accent-ink" : "text-muted hover:text-ink"
+                className={`inline-flex min-h-12 shrink-0 items-center rounded-square px-3 py-2 text-sm transition ${
+                  active ? "bg-ink text-paper" : "text-muted hover:text-ink"
                 }`}
               >
                 {link.label}
@@ -53,7 +53,7 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
             </button>
           </form>
         </div>
-      </GlassCard>
+      </Surface>
     </header>
   );
 }

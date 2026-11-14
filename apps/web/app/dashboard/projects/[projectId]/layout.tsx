@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { GHOST_BUTTON } from "../../../../components/Button";
+import { buttonClass } from "../../../../components/Button";
 import { ProjectForm } from "../../../../components/ProjectForm";
 import { ProjectTabs } from "../../../../components/ProjectTabs";
 import { LoadingScreen, Skeleton } from "../../../../components/Skeleton";
@@ -24,7 +24,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
       <LoadingScreen>
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-40 w-full rounded-card" />
+        <Skeleton className="h-40 w-full rounded-square" />
       </LoadingScreen>
     );
   }
@@ -33,9 +33,9 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   if (!project) {
     return (
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Project not found</h1>
+        <h1 className="text-2xl tracking-tight">Project not found</h1>
         <p className="text-sm text-muted">It may have been deleted.</p>
-        <Link href="/dashboard/projects" className="inline-flex min-h-10 items-center text-sm underline">
+        <Link href="/dashboard/projects" className="inline-flex min-h-12 items-center text-sm underline">
           Back to projects
         </Link>
       </div>
@@ -51,7 +51,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
 
   return (
     <div className="space-y-4">
-      <Link href="/dashboard/projects" className="inline-flex min-h-10 items-center text-sm text-muted hover:text-ink">
+      <Link href="/dashboard/projects" className="inline-flex min-h-12 items-center text-sm text-muted hover:text-ink">
         ← Projects
       </Link>
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -68,14 +68,14 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
             />
           </div>
         ) : (
-          <h1 className="break-words text-2xl font-semibold tracking-tight">{project.name}</h1>
+          <h1 className="break-words text-2xl tracking-tight">{project.name}</h1>
         )}
         {renaming ? null : (
           <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => setRenaming(true)} className={GHOST_BUTTON}>
+            <button type="button" onClick={() => setRenaming(true)} className={buttonClass("secondary")}>
               Rename
             </button>
-            <button type="button" onClick={onDelete} className={`${GHOST_BUTTON} text-danger`}>
+            <button type="button" onClick={onDelete} className={buttonClass("quiet")}>
               Delete
             </button>
           </div>

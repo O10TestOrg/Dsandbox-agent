@@ -1,7 +1,9 @@
 import { APP_NAME, PLAN_LIMITS } from "@askwell/shared";
-import { Button } from "../components/Button";
+import { ButtonLink } from "../components/Button";
 import { Container } from "../components/Container";
-import { GlassCard } from "../components/GlassCard";
+import { Section } from "../components/Section";
+import { Surface } from "../components/Surface";
+import { Eyebrow } from "../components/Text";
 import { SampleChat } from "./_landing/SampleChat";
 
 const steps = [
@@ -23,67 +25,67 @@ const plans = [
 
 export default function Home() {
   return (
-    <div className="theme-dark min-h-screen overflow-x-hidden bg-surface text-ink">
+    <div className="theme-dark min-h-screen overflow-x-hidden bg-paper text-ink">
       <header>
         <Container className="flex items-center justify-between py-5">
-          <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
+          <span className="text-lg tracking-tight">{APP_NAME}</span>
           <nav aria-label="Account" className="flex items-center gap-1 sm:gap-2">
-            <Button href="/sign-in" variant="ghost">Try the demo</Button>
+            <ButtonLink href="/sign-in" variant="secondary">Try the demo</ButtonLink>
           </nav>
         </Container>
       </header>
 
       <main>
-        <section className="py-20 text-center sm:py-32">
+        <Section className="text-center">
           <Container>
-            <h1 className="enter text-4xl font-semibold tracking-tight sm:text-6xl">
+            <h1 className="enter text-4xl tracking-tight sm:text-6xl">
               Support answers from your own product info
             </h1>
             <p className="enter-2 mx-auto mt-6 max-w-xl text-lg text-muted">
               {APP_NAME} is an AI support chat widget for any website. This is a demo: sign in with any email and look around.
             </p>
             <div className="enter-3 mt-8">
-              <Button href="/sign-in">Try the demo</Button>
+              <ButtonLink href="/sign-in">Try the demo</ButtonLink>
             </div>
           </Container>
-        </section>
+        </Section>
 
-        <section className="py-16">
+        <Section>
           <Container>
-            <h2 className="reveal text-2xl font-semibold sm:text-3xl">How it works</h2>
+            <h2 className="reveal text-2xl sm:text-3xl">How it works</h2>
             <ol className="mt-8 grid gap-4 sm:grid-cols-3">
               {steps.map((s, i) => (
                 <li key={s.title} className="reveal">
-                  <GlassCard className="h-full p-6">
-                    <span className="text-sm text-muted">Step {i + 1}</span>
-                    <h3 className="mt-2 text-lg font-medium">{s.title}</h3>
+                  <Surface className="h-full p-6">
+                    <Eyebrow>Step {i + 1}</Eyebrow>
+                    <h3 className="mt-2 text-lg">{s.title}</h3>
                     <p className="mt-2 text-muted">{s.body}</p>
-                  </GlassCard>
+                  </Surface>
                 </li>
               ))}
             </ol>
           </Container>
-        </section>
+        </Section>
 
-        <section className="py-16">
+        <Section>
           <Container>
-            <h2 className="reveal text-2xl font-semibold sm:text-3xl">See it in action</h2>
+            <h2 className="reveal text-2xl sm:text-3xl">See it in action</h2>
             <p className="mt-2 text-muted">A sample chat from the demo data.</p>
             <div className="reveal mt-8">
               <SampleChat />
             </div>
           </Container>
-        </section>
+        </Section>
 
-        <section className="py-16">
+        <Section>
           <Container>
-            <h2 className="reveal text-2xl font-semibold sm:text-3xl">Pricing</h2>
+            <h2 className="reveal text-2xl sm:text-3xl">Pricing</h2>
             <p className="mt-2 text-muted">Demo — no payment. Display only.</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {plans.map((p) => (
                 <div key={p.name} className="reveal">
-                  <GlassCard className="h-full p-6">
-                    <h3 className="text-xl font-medium">{p.name}</h3>
+                  <Surface className="h-full p-6">
+                    <h3 className="text-xl">{p.name}</h3>
                     <ul className="mt-4 space-y-2 text-muted">
                       <li>{p.limits.projects} {p.limits.projects === 1 ? "project" : "projects"}</li>
                       <li>{fmt(p.limits.messagesPerMonth)} messages a month per project</li>
@@ -92,18 +94,18 @@ export default function Home() {
                         <li key={perk}>{perk}</li>
                       ))}
                     </ul>
-                  </GlassCard>
+                  </Surface>
                 </div>
               ))}
             </div>
           </Container>
-        </section>
+        </Section>
 
-        <section className="py-16 text-center">
+        <Section className="text-center">
           <Container>
-            <Button href="/sign-in">Try the demo</Button>
+            <ButtonLink href="/sign-in">Try the demo</ButtonLink>
           </Container>
-        </section>
+        </Section>
       </main>
 
       <footer className="border-t border-line py-8">

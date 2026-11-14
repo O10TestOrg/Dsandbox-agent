@@ -1,12 +1,14 @@
 "use client";
 
 import { useActionState, useState, type FormEvent } from "react";
+import { buttonClass } from "./Button";
+import { SignalMessage } from "./Signal";
 import { demoSignIn, type AuthState } from "../app/(auth)/actions";
 
 type Mode = "sign-in" | "sign-up";
 
 const inputClass =
-  "mt-1 w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink";
+  "mt-1 min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink";
 
 /** Demo form: any email and any non-empty password. The password is only checked here in the browser; it is never sent. */
 export function AuthForm({ mode }: { mode: Mode }) {
@@ -26,23 +28,23 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   return (
     <form action={action} onSubmit={onSubmit} className="space-y-4">
-      <label className="block text-sm font-medium">
+      <label className="block text-sm">
         Email
         <input name="email" type="email" required autoComplete="off" className={inputClass} />
       </label>
-      <label className="block text-sm font-medium">
+      <label className="block text-sm">
         Password
         <input id="pw" type="password" required autoComplete="off" className={inputClass} />
       </label>
       {clientError ?? state?.error ? (
-        <p role="alert" className="text-sm text-danger">
+        <SignalMessage tone="danger" role="alert">
           {clientError ?? state?.error}
-        </p>
+        </SignalMessage>
       ) : null}
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-control bg-accent px-5 py-3 text-sm font-medium text-accent-ink transition hover:opacity-90 disabled:opacity-60"
+        className={`w-full ${buttonClass("primary")}`}
       >
         {pending ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}
       </button>
