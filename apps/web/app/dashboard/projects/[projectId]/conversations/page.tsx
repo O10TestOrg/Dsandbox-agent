@@ -25,15 +25,15 @@ export default async function Page({ params }: { params: Promise<{ projectId: st
               <li key={c.id}>
                 <Link
                   href={`/dashboard/projects/${encodeURIComponent(projectId)}/conversations/${encodeURIComponent(c.id)}`}
-                  className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-black/[0.03] focus-visible:outline-2 focus-visible:outline-focus"
+                  className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:gap-4 transition-colors hover:bg-black/[0.03] focus-visible:outline-2 focus-visible:outline-focus"
                 >
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">{previewOf(c)}</span>
-                  <span className="shrink-0 text-xs text-muted">
-                    {c.messages.length} {c.messages.length === 1 ? "message" : "messages"}
+                  <span className="flex shrink-0 gap-3 text-xs text-muted">
+                    <span>
+                      {c.messages.length} {c.messages.length === 1 ? "message" : "messages"}
+                    </span>
+                    <time dateTime={latest}>{formatTime(latest)}</time>
                   </span>
-                  <time className="hidden shrink-0 text-xs text-muted sm:block" dateTime={latest}>
-                    {formatTime(latest)}
-                  </time>
                 </Link>
               </li>
               );
