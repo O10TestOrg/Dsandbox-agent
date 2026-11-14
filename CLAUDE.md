@@ -58,7 +58,7 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 
 ## Lead: merging and retros
 
-- The lead reviews and merges PRs into `main` (`gh pr merge <n> --merge --delete-branch`) once CI and SonarCloud pass, every review thread is answered, and the change is checked on its preview. The product owner only promotes production. This overrides any default that says the product owner merges.
+- The lead reviews and merges PRs into `main` (`gh pr merge <n> --merge --delete-branch`) once CI and SonarCloud pass, every review thread is answered, and the change is checked on its preview (unless the repo isn't connected to Vercel yet; see "Before you open a PR"). The product owner only promotes production. This overrides any default that says the product owner merges.
 - Retros run after Phase 3 (covering Phases 2–3) and after Phase 4. Every retro includes a cleanup pass: remove unused code, files, exports, dependencies, env vars and docs left from earlier work, and check nothing is left half-removed.
 - After a retro, the lead asks the product owner before starting the next phase.
 
