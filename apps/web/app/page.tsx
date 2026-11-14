@@ -2,25 +2,24 @@ import { APP_NAME, PLAN_LIMITS } from "@askwell/shared";
 import { Button } from "../components/Button";
 import { Container } from "../components/Container";
 import { GlassCard } from "../components/GlassCard";
+import { SampleChat } from "./_landing/SampleChat";
 
 const steps = [
-  { title: "Add your product info", body: "Paste text or upload a PDF. That is all the bot knows." },
-  { title: "Copy one script tag", body: "Paste it into any page on your site." },
-  { title: "Visitors get answers", body: "The chat button answers their questions from your info." },
+  { title: "Add your product info", body: "Paste text or upload a file. That is all the bot knows." },
+  { title: "Ask your bot", body: "Try it in the dashboard. It answers from your info, or says it doesn't know." },
+  { title: "Read the chats", body: "Every conversation is saved, and usage counts up against your plan." },
 ];
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
 const plans = [
-  { name: "Free", limits: PLAN_LIMITS.free, perks: ["Default button", "Bottom right only", '"Powered by" badge'] },
+  { name: "Free", limits: PLAN_LIMITS.free, perks: ["Default widget", '"Powered by" badge shown'] },
   {
     name: "Pro",
     limits: PLAN_LIMITS.pro,
-    perks: ["Any button color and label", "Any corner", "Custom header text", "No badge"],
+    perks: ["Full widget customization", '"Powered by" badge hidden'],
   },
 ];
-
-const snippet = `<script src="https://YOUR-DOMAIN/widget.js" data-key="pk_..."></script>`;
 
 export default function Home() {
   return (
@@ -29,8 +28,7 @@ export default function Home() {
         <Container className="flex items-center justify-between py-5">
           <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
           <nav aria-label="Account" className="flex items-center gap-1 sm:gap-2">
-            <Button href="/sign-in" variant="text">Sign in</Button>
-            <Button href="/sign-up" variant="ghost">Start free</Button>
+            <Button href="/sign-in" variant="ghost">Try the demo</Button>
           </nav>
         </Container>
       </header>
@@ -39,13 +37,13 @@ export default function Home() {
         <section className="py-20 text-center sm:py-32">
           <Container>
             <h1 className="enter text-4xl font-semibold tracking-tight sm:text-6xl">
-              Support answers on your site, in one script tag
+              Support answers from your own product info
             </h1>
             <p className="enter-2 mx-auto mt-6 max-w-xl text-lg text-muted">
-              {APP_NAME} turns your product info into a chat bot that answers visitor questions.
+              {APP_NAME} is an AI support chat widget for any website. This is a demo: sign in with any email and look around.
             </p>
             <div className="enter-3 mt-8">
-              <Button href="/sign-up">Start free</Button>
+              <Button href="/sign-in">Try the demo</Button>
             </div>
           </Container>
         </section>
@@ -70,25 +68,9 @@ export default function Home() {
         <section className="py-16">
           <Container>
             <h2 className="reveal text-2xl font-semibold sm:text-3xl">See it in action</h2>
-            <p className="mt-2 text-muted">A preview. The live widget arrives in a later phase.</p>
-            <div className="reveal mt-8 flex justify-end">
-              <div className="flex w-full max-w-sm flex-col gap-3">
-                <GlassCard className="p-4">
-                  <p className="text-sm text-muted">Visitor</p>
-                  <p className="mt-1">What does the Pro plan include?</p>
-                  <p className="mt-4 text-sm text-muted">{APP_NAME} bot</p>
-                  <p className="mt-1">
-                    Up to {PLAN_LIMITS.pro.projects} projects and {fmt(PLAN_LIMITS.pro.messagesPerMonth)} messages a
-                    month each.
-                  </p>
-                </GlassCard>
-                <div
-                  aria-hidden="true"
-                  className="ml-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-xl text-accent-ink shadow-glass"
-                >
-                  ?
-                </div>
-              </div>
+            <p className="mt-2 text-muted">A sample chat from the demo data.</p>
+            <div className="reveal mt-8">
+              <SampleChat />
             </div>
           </Container>
         </section>
@@ -96,6 +78,7 @@ export default function Home() {
         <section className="py-16">
           <Container>
             <h2 className="reveal text-2xl font-semibold sm:text-3xl">Pricing</h2>
+            <p className="mt-2 text-muted">Demo — no payment. Display only.</p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               {plans.map((p) => (
                 <div key={p.name} className="reveal">
@@ -116,18 +99,9 @@ export default function Home() {
           </Container>
         </section>
 
-        <section className="py-16">
+        <section className="py-16 text-center">
           <Container>
-            <h2 className="reveal text-2xl font-semibold sm:text-3xl">Install</h2>
-            <p className="mt-2 text-muted">Paste this before the closing body tag.</p>
-            <GlassCard className="reveal mt-6 p-4">
-              <pre className="overflow-x-auto font-mono text-sm">
-                <code>{snippet}</code>
-              </pre>
-            </GlassCard>
-            <div className="mt-8">
-              <Button href="/sign-up">Start free</Button>
-            </div>
+            <Button href="/sign-in">Try the demo</Button>
           </Container>
         </section>
       </main>
