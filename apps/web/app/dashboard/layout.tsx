@@ -14,14 +14,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const name = await getDemoName();
   if (!name) redirect("/sign-in");
   return (
-    <div className="min-h-screen bg-paper text-ink">
-      <DashboardNav name={name} appName={APP_NAME} />
-      <main>
-        <Container className="space-y-8 py-8 md:py-12">
-          <StorageNotice />
-          {children}
-        </Container>
-      </main>
-    </div>
+    <DashboardNav name={name} appName={APP_NAME}>
+      <Container className="space-y-8 py-8 md:py-12">
+        <StorageNotice />
+        {children}
+      </Container>
+    </DashboardNav>
   );
 }

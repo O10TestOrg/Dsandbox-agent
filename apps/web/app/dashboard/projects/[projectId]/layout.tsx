@@ -5,9 +5,7 @@ import { useState } from "react";
 import { Button, ButtonLink } from "../../../../components/Button";
 import { EmptyState } from "../../../../components/EmptyState";
 import { Icon } from "../../../../components/Icon";
-import { Link } from "../../../../components/Link";
 import { ProjectForm } from "../../../../components/ProjectForm";
-import { ProjectTabs } from "../../../../components/ProjectTabs";
 import { LoadingScreen, Skeleton } from "../../../../components/Skeleton";
 import { Eyebrow } from "../../../../components/Text";
 import { useDemoStore } from "../../../../lib/use-demo-store";
@@ -55,10 +53,6 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <Link href="/dashboard/projects" variant="nav" className="gap-2 text-muted hover:text-ink">
-          <Icon name="arrow-left" />
-          All projects
-        </Link>
         <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           {renaming ? (
             <div className="flex-1">
@@ -91,7 +85,6 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
           )}
         </header>
       </div>
-      <ProjectTabs projectId={project.id} />
       <div>{children}</div>
     </div>
   );
