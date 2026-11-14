@@ -3,15 +3,15 @@ import { redirect } from "next/navigation";
 import { APP_NAME } from "@askwell/shared";
 import { AuthCard } from "../../../components/AuthCard";
 import { AuthForm } from "../../../components/AuthForm";
-import { getSession } from "../../../lib/session";
+import { getDemoName } from "../../../lib/demo-session";
 
-// Reads the session per request; never prerender (it would touch the database at build).
+// Reads the demo cookie per request.
 export const dynamic = "force-dynamic";
 
 export const metadata = { title: `Sign in · ${APP_NAME}` };
 
 export default async function SignInPage() {
-  if (await getSession()) redirect("/dashboard");
+  if (await getDemoName()) redirect("/dashboard");
   return (
     <AuthCard
       title="Sign in"

@@ -1,0 +1,73 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { demoSignOut } from "../app/(auth)/actions";
+import { GlassCard } from "./GlassCard";
+
+const LINKS = [
+  { href: "/dashboard/projects", label: "Projects" },
+  { href: "/dashboard/knowledge", label: "Knowledge" },
+  { href: "/dashboard/conversations", label: "Conversations" },
+  { href: "/dashboard/usage", label: "Usage" },
+];
+
+const STORAGE_PREFIX = "askwell:";
+
+function resetDemo() {
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(STORAGE_PREFIX)) localStorage.removeItem(key);
+    }
+  } catch {
+    // Storage can be blocked; there is nothing to reset then.
+  }
+  window.location.reload();
+}
+
+const small =
+  "shrink-0 rounded-control border border-line px-3 py-2 text-sm text-ink transition hover:bg-raised";
+
+export function DashboardNav({ name, appName }: { name: string; appName: string }) {
+  const pathname = usePathname();
+  return (
+    <header className="sticky top-0 z-10 p-3 sm:p-4">
+      <GlassCard className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/dashboard" className="font-semibold tracking-tight">
+            {appName}
+          </Link>
+          <span className="truncate text-sm text-muted md:hidden">{name}</span>
+        </div>
+        <nav aria-label="Dashboard" className="-mx-1 flex gap-1 overflow-x-auto px-1">
+          {LINKS.map((link) => {
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={`shrink-0 rounded-control px-3 py-2 text-sm transition ${
+                  active ? "bg-accent text-accent-ink" : "text-muted hover:text-ink"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="flex items-center gap-2">
+          <span className="hidden max-w-40 truncate text-sm text-muted md:inline">{name}</span>
+          <button type="button" onClick={resetDemo} className={small}>
+            Reset demo
+          </button>
+          <form action={demoSignOut}>
+            <button type="submit" className={small}>
+              Sign out
+            </button>
+          </form>
+        </div>
+      </GlassCard>
+    </header>
+  );
+}
