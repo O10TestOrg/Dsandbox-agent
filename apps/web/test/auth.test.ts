@@ -6,15 +6,15 @@ import { user } from "../../../packages/db/schema";
 const testDb = await createTestDb();
 
 vi.mock("server-only", () => ({}));
-vi.mock("@askwell/db/client", () => ({ db: testDb.db }));
+vi.mock("@askwell/db/client", () => ({ getDb: () => testDb.db }));
 
-type Auth = Awaited<ReturnType<typeof import("../lib/auth").getAuth>>;
+type Auth = ReturnType<typeof import("../lib/auth").getAuth>;
 let auth: Auth;
 
 beforeAll(async () => {
   vi.stubEnv("BETTER_AUTH_SECRET", "test-secret-test-secret-test-secret-12345");
   vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3000");
-  auth = await (await import("../lib/auth")).getAuth();
+  auth = (await import("../lib/auth")).getAuth();
 });
 
 const planOf = async (email: string) => {

@@ -7,13 +7,25 @@ import * as schema from "./schema";
 // Node has no global WebSocket in every runtime we deploy to; the Pool needs one.
 neonConfig.webSocketConstructor = ws;
 
-const connectionString = process.env.DATABASE_URL;
-if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
+function createDb(connectionString: string) {
+  // WebSocket Pool: supports transactions (the HTTP driver cannot).
+  return drizzle(new Pool({ connectionString }), { schema });
 }
 
-// WebSocket Pool: supports transactions (the HTTP driver cannot).
-const pool = new Pool({ connectionString });
+export type Database = ReturnType<typeof createDb>;
 
-export const db = drizzle(pool, { schema });
-export type Database = typeof db;
+let instance: Database | undefined;
+
+/**
+ * The database client, created on first call and reused for the life of the process.
+ * Reads DATABASE_URL only here, never at import, so `next build` works without it.
+ */
+export function getDb(): Database {
+  if (instance) return instance;
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is not set");
+  }
+  instance = createDb(connectionString);
+  return instance;
+}
