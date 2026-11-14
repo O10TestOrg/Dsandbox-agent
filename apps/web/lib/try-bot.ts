@@ -30,6 +30,8 @@ export async function sendMessage(
   actions: SendActions,
   input: { projectId: string; conversationId: string | null; text: string },
   wait: () => Promise<void> = () => delay(TYPING_DELAY_MS),
+  /** Called once the visitor message is stored, before the typing delay, so the UI can show the chat right away. */
+  onStarted?: (conversationId: string) => void,
 ): Promise<SendResult> {
   const checked = validateMessage(input.text);
   if (!checked.ok) return checked;
@@ -38,8 +40,10 @@ export async function sendMessage(
   const conversationId = input.conversationId ?? actions.startConversation(input.projectId);
   if (!conversationId || !actions.appendMessage(conversationId, "visitor", checked.text)) return missing;
 
+  onStarted?.(conversationId);
   await wait();
-  actions.appendMessage(conversationId, "bot", getScriptedReply(input.projectId, checked.text));
+  // Empty id: the conversation vanished while the bot was typing (e.g. the demo was reset).
+  if (!actions.appendMessage(conversationId, "bot", getScriptedReply(input.projectId, checked.text))) return missing;
   return { ok: true, conversationId };
 }
 

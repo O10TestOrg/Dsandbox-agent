@@ -76,6 +76,25 @@ describe("sendMessage", () => {
     expect(used()).toBe(start + 2);
   });
 
+  it("reports the new conversation before the bot's typing delay, with the visitor message already stored", async () => {
+    const store = makeStore();
+    const seen: { id: string; bodies: string[] }[] = [];
+    const wait = () => {
+      expect(seen).toHaveLength(1);
+      return Promise.resolve();
+    };
+    await sendMessage(store, { projectId: coffee, conversationId: null, text: "hours?" }, wait, (id) =>
+      seen.push({ id, bodies: store.getState().conversations.find((c) => c.id === id)?.messages.map((m) => m.body) ?? [] }),
+    );
+    expect(seen[0]?.bodies).toEqual(["hours?"]);
+  });
+
+  it("fails when the demo is reset while the bot is typing", async () => {
+    const store = makeStore();
+    const result = await sendMessage(store, { projectId: coffee, conversationId: null, text: "hours?" }, async () => store.reset());
+    expect(result.ok).toBe(false);
+  });
+
   it("fails cleanly when the conversation no longer exists", async () => {
     const store = makeStore();
     const result = await sendMessage(store, { projectId: coffee, conversationId: "gone", text: "hi" }, noWait);

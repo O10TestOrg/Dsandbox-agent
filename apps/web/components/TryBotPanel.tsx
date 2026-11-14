@@ -30,9 +30,9 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
     setDraft("");
     setTyping(true);
     try {
-      const result = await sendMessage(store, { projectId, conversationId, text });
-      if (result.ok) setConversationId(result.conversationId);
-      else {
+      const result = await sendMessage(store, { projectId, conversationId, text }, undefined, setConversationId);
+      if (!result.ok) {
+        setConversationId(null);
         setError(result.error);
         setDraft(text);
       }
@@ -107,7 +107,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
           <div className="flex justify-start">
             <div className="rounded-card border border-line bg-raised px-4 py-2.5 text-sm text-muted">
               <span className="sr-only">The bot is typing</span>
-              <span aria-hidden="true" className="animate-pulse">
+              <span aria-hidden="true" className="animate-pulse motion-reduce:animate-none">
                 …
               </span>
             </div>
