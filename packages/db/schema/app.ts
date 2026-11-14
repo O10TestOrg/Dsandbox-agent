@@ -34,8 +34,8 @@ export const projects = pgTable(
     name: text("name").notNull(),
     publicKey: text("public_key").notNull().unique(),
     messagesUsed: integer("messages_used").notNull().default(0),
-    periodStart: timestamp("period_start").notNull().defaultNow(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    periodStart: timestamp("period_start", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("projects_owner_id_idx").on(t.ownerId)],
 );
@@ -64,7 +64,7 @@ export const knowledgeSources = pgTable(
     /** Null for pasted text. */
     blobPathname: text("blob_pathname"),
     status: knowledgeStatusEnum("status").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     index("knowledge_sources_project_id_idx").on(t.projectId),
@@ -104,7 +104,7 @@ export const conversations = pgTable(
       .notNull()
       .references(() => projects.id, { onDelete: "cascade" }),
     visitorId: text("visitor_id").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("conversations_project_id_idx").on(t.projectId)],
 );
@@ -124,7 +124,7 @@ export const messages = pgTable(
     outputTokens: integer("output_tokens"),
     costUsd: numeric("cost_usd", { precision: 12, scale: 6 }),
     latencyMs: integer("latency_ms"),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("messages_conversation_id_idx").on(t.conversationId)],
 );
@@ -133,7 +133,7 @@ export const stripeEvents = pgTable("stripe_events", {
   /** Stripe event ID. Makes the webhook idempotent. */
   id: text("id").primaryKey(),
   type: text("type").notNull(),
-  receivedAt: timestamp("received_at").notNull().defaultNow(),
+  receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const events = pgTable(
@@ -145,7 +145,7 @@ export const events = pgTable(
     projectId: text("project_id").references(() => projects.id, { onDelete: "set null" }),
     /** No message text. */
     props: jsonb("props").notNull().default(sql`'{}'::jsonb`),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("events_name_created_at_idx").on(t.name, t.createdAt)],
 );
