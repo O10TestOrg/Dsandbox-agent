@@ -12,7 +12,7 @@ class Redirect extends Error {
   }
 }
 
-vi.mock("next/headers", () => ({ cookies: async () => cookieJar }));
+vi.mock("next/headers", () => ({ cookies: () => Promise.resolve(cookieJar) }));
 vi.mock("next/navigation", () => ({
   redirect: (url: string) => {
     throw new Redirect(url);

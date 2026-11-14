@@ -5,6 +5,7 @@ import { Button } from "./Button";
 import { INPUT } from "./field";
 import { SignalMessage } from "./Signal";
 import { parseProjectName } from "../lib/project-name";
+import { formText } from "../lib/form-text";
 
 /** One name field with a submit button. Used for "Add project" and "Rename". The name renders as text only. */
 export function ProjectForm({
@@ -24,7 +25,7 @@ export function ProjectForm({
   function handle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const parsed = parseProjectName(String(new FormData(form).get("name") ?? ""));
+    const parsed = parseProjectName(formText(new FormData(form), "name"));
     if (!parsed.ok) {
       setError(parsed.error);
       return;
