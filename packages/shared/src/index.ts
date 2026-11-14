@@ -9,3 +9,4 @@ export * from "./api/knowledge";
 export * from "./api/conversations";
 export * from "./api/config";
 export * from "./api/billing";
+export * from "./demo";
