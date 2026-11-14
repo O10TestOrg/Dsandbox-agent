@@ -8,6 +8,7 @@ Askwell is an AI support chat widget for any website, built as a polished demo: 
 |---|---|
 | `docs/project.md` | What we build: demo flow, features, demo data, security rules, design |
 | `docs/plan.md` | The phases, in build order (human-written) |
+| `docs/DESIGN.md` | The design rules every screen follows |
 
 Your task (from `get_my_task`) lists the `project.md` sections it needs. Read those, not the whole file.
 

@@ -208,14 +208,14 @@ The demo needs no environment variables. `.env` is never committed.
 
 ## 13. Design
 
-Every screen follows this. Agents don't pick their own style.
+Every screen follows `docs/DESIGN.md`. Agents don't pick their own style. This replaces the earlier glass style.
 
 | Area | Look |
 |---|---|
-| Overall | Black and white, with glass effects (blurred, translucent panels) |
-| Landing page | Dark, with simple motion: subtle entrance and scroll animations |
-| Dashboard | Light, monochrome, glass panels |
-| Sign-in / sign-up | Our own pages, using the dashboard's tokens: one centered glass card |
-| Tokens | One set of design tokens (colors, radius, shadows, blur) shared by every page |
+| Overall | Calm, flat, monochrome. Hairline borders, no shadows, no glass. One typeface, one weight. |
+| Landing page | Same system, dark theme (re-scoped tokens). Simple fade-in motion only. |
+| Dashboard | Light theme |
+| Sign-in / sign-up | One centered form on the dashboard's tokens. Says it's a demo. |
+| Tokens | One set shared by every page (see DESIGN.md §2) |
 | States | Empty, loading and error states on every screen |
 | Responsive | Works down to 375 px wide |
