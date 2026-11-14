@@ -2,32 +2,39 @@
 
 import { PLAN_LIMITS } from "@askwell/shared";
 import { Notice } from "../../../../../components/Signal";
-import { Eyebrow, MetaText } from "../../../../../components/Text";
-import { Surface } from "../../../../../components/Surface";
+import { StatStrip } from "../../../../../components/StatStrip";
+import { MetaText } from "../../../../../components/Text";
 import { usagePercent } from "../../../../../lib/usage";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
 
 const FREE_LIMIT = PLAN_LIMITS.free.messagesPerMonth;
+const SOURCE_LIMIT = PLAN_LIMITS.free.knowledgeSources;
 const fmt = new Intl.NumberFormat("en-US");
 
 export function UsagePanel({ projectId }: { projectId: string }) {
-  const { projects } = useDemoStore();
+  const { projects, sources } = useDemoStore();
   const project = projects.find((p) => p.id === projectId);
   if (!project) return null;
+  const sourceCount = sources.filter((s) => s.projectId === projectId).length;
 
   const used = project.messagesUsed;
   const percent = usagePercent(used, FREE_LIMIT);
 
   return (
     <div className="space-y-6">
-      <Surface className="space-y-6 p-6 sm:p-8">
-        <div className="space-y-2">
-          <Eyebrow>Messages this month</Eyebrow>
-          <p className="text-display tabular-nums">
-            {fmt.format(used)}
-            <span className="text-heading text-muted"> / {fmt.format(FREE_LIMIT)}</span>
-          </p>
-        </div>
+      <StatStrip
+        label="Usage this month"
+        stats={[
+          { label: "Messages", value: fmt.format(used), caption: "This month" },
+          { label: "Limit", value: fmt.format(FREE_LIMIT), caption: "Free plan, per month" },
+          {
+            label: "Sources",
+            value: fmt.format(sourceCount),
+            caption: `Of ${fmt.format(SOURCE_LIMIT)} on the Free plan`,
+          },
+        ]}
+      />
+      <div className="space-y-3">
         <div
           role="progressbar"
           aria-label="Messages used this month"
@@ -43,7 +50,7 @@ export function UsagePanel({ projectId }: { projectId: string }) {
           />
         </div>
         <MetaText className="block">{percent}% of the Free plan</MetaText>
-      </Surface>
+      </div>
       <Notice>Demo. Nothing is charged and no messages are blocked, even over the limit.</Notice>
     </div>
   );

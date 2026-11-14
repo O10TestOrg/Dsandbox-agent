@@ -1,11 +1,25 @@
 "use client";
 
-import Link from "next/link";
+import type { DemoConversation } from "@askwell/shared";
 import { ButtonLink } from "../../../../../components/Button";
 import { EmptyState } from "../../../../../components/EmptyState";
-import { MetaText } from "../../../../../components/Text";
-import { formatTime, latestActivity, previewOf, sortNewestFirst } from "../../../../../lib/conversations";
+import { Table, type Column } from "../../../../../components/Table";
+import { formatTime, previewOf, sortNewestFirst } from "../../../../../lib/conversations";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
+
+const COLUMNS: Column<DemoConversation>[] = [
+  { key: "preview", header: "Preview", primary: true, cell: (c) => previewOf(c) },
+  { key: "messages", header: "Messages", numeric: true, cell: (c) => c.messages.length },
+  {
+    key: "started",
+    header: "Started",
+    cell: (c) => (
+      <time dateTime={c.createdAt} className="tabular-nums text-muted">
+        {formatTime(c.createdAt)}
+      </time>
+    ),
+  },
+];
 
 export function ConversationList({ projectId }: { projectId: string }) {
   const { conversations: all } = useDemoStore();
@@ -26,29 +40,14 @@ export function ConversationList({ projectId }: { projectId: string }) {
     );
   }
 
+  const base = `/dashboard/projects/${encodeURIComponent(projectId)}/conversations`;
   return (
-    <ul className="divide-y divide-line border-y border-line">
-      {conversations.map((c) => {
-        const latest = new Date(latestActivity(c)).toISOString();
-        return (
-          <li key={c.id}>
-            <Link
-              href={`/dashboard/projects/${encodeURIComponent(projectId)}/conversations/${encodeURIComponent(c.id)}`}
-              className="group flex min-h-12 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:gap-6"
-            >
-              <span className="min-w-0 flex-1 truncate text-body underline-offset-4 decoration-1 group-hover:underline">
-                {previewOf(c)}
-              </span>
-              <MetaText className="flex shrink-0 gap-4">
-                <span>
-                  {c.messages.length} {c.messages.length === 1 ? "message" : "messages"}
-                </span>
-                <time dateTime={latest}>{formatTime(latest)}</time>
-              </MetaText>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+    <Table
+      label="Conversations"
+      columns={COLUMNS}
+      rows={conversations}
+      rowKey={(c) => c.id}
+      rowHref={(c) => `${base}/${encodeURIComponent(c.id)}`}
+    />
   );
 }
