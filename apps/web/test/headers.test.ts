@@ -20,7 +20,7 @@ async function headersFor(path: string): Promise<Record<string, string>> {
 }
 
 describe("security headers", () => {
-  it.each(["/", "/sign-in", "/sign-up", "/dashboard", "/dashboard/p1", "/api/projects", "/embedded", "/embedx"])(
+  it.each(["/", "/sign-in", "/sign-up", "/dashboard", "/dashboard/p1", "/api/projects", "/embedded", "/embedx", "/embed", "/embed/", "/embed/chat"])(
     "%s may only be framed by our own origin",
     async (path) => {
       const h = await headersFor(path);
@@ -30,11 +30,4 @@ describe("security headers", () => {
       expect(h["referrer-policy"]).toBe("strict-origin-when-cross-origin");
     },
   );
-
-  it.each(["/embed", "/embed/", "/embed/chat"])("%s may be framed by any site", async (path) => {
-    const h = await headersFor(path);
-    expect(h["content-security-policy"]).toBe("frame-ancestors *");
-    expect(h["x-frame-options"]).toBeUndefined();
-    expect(h["x-content-type-options"]).toBe("nosniff");
-  });
 });
