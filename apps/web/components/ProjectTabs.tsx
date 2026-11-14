@@ -23,7 +23,7 @@ export function ProjectTabs({ projectId }: { projectId: string }) {
             key={tab.slug}
             href={href}
             aria-current={active ? "page" : undefined}
-            className={`shrink-0 rounded-control px-3 py-2 text-sm transition ${
+            className={`inline-flex min-h-10 shrink-0 items-center rounded-control px-3 py-2 text-sm transition ${
               active ? "bg-accent text-accent-ink" : "text-muted hover:text-ink"
             }`}
           >

@@ -1,6 +1,7 @@
+import { APP_NAME } from "@askwell/shared";
 import { UsagePanel } from "./UsagePanel";
 
-export const metadata = { title: "Usage" };
+export const metadata = { title: `Usage · ${APP_NAME}` };
 
 export default async function Page({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;

@@ -20,7 +20,7 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
     <header className="sticky top-0 z-10 p-3 sm:p-4">
       <GlassCard className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="font-semibold tracking-tight">
+          <Link href="/dashboard" className="inline-flex min-h-10 items-center font-semibold tracking-tight">
             {appName}
           </Link>
           <span className="truncate text-sm text-muted md:hidden">{name}</span>
@@ -33,7 +33,7 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`shrink-0 rounded-control px-3 py-2 text-sm transition ${
+                className={`inline-flex min-h-10 shrink-0 items-center rounded-control px-3 py-2 text-sm transition ${
                   active ? "bg-accent text-accent-ink" : "text-muted hover:text-ink"
                 }`}
               >

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { EmptyState } from "../../../components/EmptyState";
 import { GlassCard } from "../../../components/GlassCard";
 import { ProjectForm } from "../../../components/ProjectForm";
+import { LoadingScreen, Skeleton } from "../../../components/Skeleton";
 import { useDemoStore } from "../../../lib/use-demo-store";
 import { useHydrated } from "../../../lib/use-hydrated";
 
@@ -20,7 +21,15 @@ export default function ProjectsPage() {
       <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
       <ProjectForm submitLabel="New project" onSubmit={(name) => createProject(name)} />
       {!hydrated ? (
-        <p className="text-sm text-muted">Loading…</p>
+        <LoadingScreen>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <li key={i}>
+                <Skeleton className="h-28 rounded-card" />
+              </li>
+            ))}
+          </ul>
+        </LoadingScreen>
       ) : projects.length === 0 ? (
         <EmptyState title="No projects yet">Create one above, or use Reset demo to bring back the samples.</EmptyState>
       ) : (

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { GHOST_BUTTON } from "../../../../components/Button";
 import { ProjectForm } from "../../../../components/ProjectForm";
 import { ProjectTabs } from "../../../../components/ProjectTabs";
+import { LoadingScreen, Skeleton } from "../../../../components/Skeleton";
 import { useDemoStore } from "../../../../lib/use-demo-store";
 import { useHydrated } from "../../../../lib/use-hydrated";
 
@@ -18,7 +19,15 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   // Saved data lives in the browser, so the server can't know if this id exists. Wait for the client.
   const hydrated = useHydrated();
 
-  if (!hydrated || deleted) return <p className="text-sm text-muted">Loading…</p>;
+  if (!hydrated || deleted) {
+    return (
+      <LoadingScreen>
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-40 w-full rounded-card" />
+      </LoadingScreen>
+    );
+  }
 
   const project = projects.find((p) => p.id === projectId);
   if (!project) {
@@ -26,7 +35,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">Project not found</h1>
         <p className="text-sm text-muted">It may have been deleted.</p>
-        <Link href="/dashboard/projects" className="text-sm underline">
+        <Link href="/dashboard/projects" className="inline-flex min-h-10 items-center text-sm underline">
           Back to projects
         </Link>
       </div>
@@ -42,7 +51,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
 
   return (
     <div className="space-y-4">
-      <Link href="/dashboard/projects" className="text-sm text-muted hover:text-ink">
+      <Link href="/dashboard/projects" className="inline-flex min-h-10 items-center text-sm text-muted hover:text-ink">
         ← Projects
       </Link>
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

@@ -66,7 +66,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
           type="button"
           onClick={newChat}
           disabled={typing}
-          className="shrink-0 rounded-control border border-line px-3 py-1.5 text-sm hover:bg-raised disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
+          className="inline-flex min-h-10 shrink-0 items-center rounded-control border border-line px-3 py-1.5 text-sm hover:bg-raised disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
         >
           New chat
         </button>
@@ -82,7 +82,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
                   key={q}
                   type="button"
                   onClick={() => setDraft(q)}
-                  className="rounded-full border border-line px-3 py-1.5 text-sm hover:bg-raised focus-visible:outline-2 focus-visible:outline-focus"
+                  className="min-h-10 rounded-full border border-line px-3 py-1.5 text-sm hover:bg-raised focus-visible:outline-2 focus-visible:outline-focus"
                 >
                   {q}
                 </button>
@@ -137,12 +137,12 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
             }}
             placeholder="Ask your bot something…"
             autoComplete="off"
-            className="min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-focus"
+            className="min-h-10 min-w-0 flex-1 rounded-control border border-line bg-surface px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-focus"
           />
           <button
             type="submit"
             disabled={typing || !valid}
-            className="shrink-0 rounded-control bg-accent px-5 py-2 text-sm font-medium text-accent-ink hover:opacity-90 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
+            className="min-h-10 shrink-0 rounded-control bg-accent px-5 py-2 text-sm font-medium text-accent-ink hover:opacity-90 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-focus"
           >
             Send
           </button>
