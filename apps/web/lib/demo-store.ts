@@ -48,11 +48,48 @@ export type DemoStore = DemoActions & {
   subscribe: (listener: () => void) => () => void;
 };
 
-const isState = (value: unknown): value is DemoState => {
-  if (typeof value !== "object" || value === null) return false;
-  const v = value as Record<string, unknown>;
-  return Array.isArray(v.projects) && Array.isArray(v.sources) && Array.isArray(v.conversations);
-};
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+const isString = (value: unknown): value is string => typeof value === "string";
+const SOURCE_TYPES: readonly unknown[] = ["text", "pdf", "md", "txt"];
+const SOURCE_STATUSES: readonly unknown[] = ["processing", "ready", "failed"];
+
+const isProject = (v: unknown): v is DemoProject =>
+  isRecord(v) && isString(v.id) && isString(v.name) && isString(v.createdAt) && Number.isFinite(v.messagesUsed);
+
+const isSource = (v: unknown): v is DemoKnowledgeSource =>
+  isRecord(v) &&
+  isString(v.id) &&
+  isString(v.projectId) &&
+  isString(v.title) &&
+  isString(v.createdAt) &&
+  SOURCE_TYPES.includes(v.type) &&
+  SOURCE_STATUSES.includes(v.status);
+
+const isMessage = (v: unknown): v is DemoMessage =>
+  isRecord(v) &&
+  isString(v.id) &&
+  isString(v.body) &&
+  isString(v.createdAt) &&
+  (v.role === "visitor" || v.role === "bot");
+
+const isConversation = (v: unknown): v is DemoConversation =>
+  isRecord(v) &&
+  isString(v.id) &&
+  isString(v.projectId) &&
+  isString(v.createdAt) &&
+  Array.isArray(v.messages) &&
+  v.messages.every(isMessage);
+
+/** Saved data is untrusted (it can be stale or hand-edited): every record must match the shared types. */
+const isState = (value: unknown): value is DemoState =>
+  isRecord(value) &&
+  Array.isArray(value.projects) &&
+  value.projects.every(isProject) &&
+  Array.isArray(value.sources) &&
+  value.sources.every(isSource) &&
+  Array.isArray(value.conversations) &&
+  value.conversations.every(isConversation);
 
 function load(storage: StorageLike | undefined): DemoState {
   try {

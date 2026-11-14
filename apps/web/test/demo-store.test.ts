@@ -18,6 +18,8 @@ const first = <T>(items: T[]): T => {
 };
 const firstProject = first(DEMO_PROJECTS);
 const firstSource = first(DEMO_KNOWLEDGE_SOURCES);
+const firstConversation = first(DEMO_CONVERSATIONS.filter((c) => c.messages.length > 0));
+const firstMessage = first(firstConversation.messages);
 
 const seed = { projects: DEMO_PROJECTS, sources: DEMO_KNOWLEDGE_SOURCES, conversations: DEMO_CONVERSATIONS };
 
@@ -145,6 +147,29 @@ describe("reset and persistence", () => {
   it("falls back to the seed when the saved value has the wrong shape", () => {
     data.set(DEMO_STORE_KEY, JSON.stringify({ projects: "nope" }));
     expect(newStore().getState()).toEqual(seed);
+  });
+
+  it.each([
+    ["a null project", { ...seed, projects: [null] }],
+    ["a project with a non-string id", { ...seed, projects: [{ ...firstProject, id: 7 }] }],
+    ["a project with a non-numeric usage count", { ...seed, projects: [{ ...firstProject, messagesUsed: "3" }] }],
+    ["a source with an unknown status", { ...seed, sources: [{ ...firstSource, status: "done" }] }],
+    ["a source with an unknown type", { ...seed, sources: [{ ...firstSource, type: "exe" }] }],
+    ["a conversation with null messages", { ...seed, conversations: [{ ...firstConversation, messages: null }] }],
+    ["a message with an unknown role", { ...seed, conversations: [{ ...firstConversation, messages: [{ ...firstMessage, role: "admin" }] }] }],
+    ["a null message", { ...seed, conversations: [{ ...firstConversation, messages: [null] }] }],
+  ])("falls back to the seed on %s", (_label, saved) => {
+    data.set(DEMO_STORE_KEY, JSON.stringify(saved));
+    const store = newStore();
+    expect(store.getState()).toEqual(seed);
+    store.renameProject(firstProject.id, "Still works");
+    store.appendMessage(firstConversation.id, "visitor", "Still works");
+  });
+
+  it("accepts a valid saved state unchanged", () => {
+    const saved = { ...seed, projects: [{ ...firstProject, name: "Saved name" }] };
+    data.set(DEMO_STORE_KEY, JSON.stringify(saved));
+    expect(newStore().getState().projects[0]?.name).toBe("Saved name");
   });
 
   it("falls back to the seed when reading throws, and keeps working when writing throws", () => {
