@@ -182,17 +182,13 @@ docs/
   plan.md         # phases (human-written)
 ```
 
-`apps/widget` and `packages/db` are not part of the demo. `packages/db` is deleted in Phase 2.
+`apps/widget` and `packages/db` were removed in Phase 2. Don't add them back.
 
 ---
 
 ## 11. Environment variables
 
-| Variable              | Used by         | Public? |
-| --------------------- | --------------- | ------- |
-| `NEXT_PUBLIC_APP_URL` | Client + server | Yes     |
-
-`.env.example` lists it with no value. `.env` is never committed.
+The demo needs no environment variables. `.env` is never committed.
 
 ---
 
