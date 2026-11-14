@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { GHOST_BUTTON, PRIMARY_BUTTON } from "./Button";
 import { parseProjectName } from "../lib/project-name";
 
 /** One name field with a submit button. Used for "New project" and "Rename". The name renders as text only. */
@@ -55,7 +56,7 @@ export function ProjectForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="rounded-control bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90"
+          className={PRIMARY_BUTTON}
         >
           {submitLabel}
         </button>
@@ -63,7 +64,7 @@ export function ProjectForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-control border border-line px-4 py-2.5 text-sm transition hover:bg-raised"
+            className={`${GHOST_BUTTON} py-2.5`}
           >
             Cancel
           </button>

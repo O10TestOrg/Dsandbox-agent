@@ -2,7 +2,7 @@ import type { DemoKnowledgeSource } from "@askwell/shared";
 
 /** How long a new source shows "processing" before it becomes "ready". */
 export const KNOWLEDGE_PROCESSING_MS = 2000;
-export const SOURCE_TITLE_MAX = 120;
+const SOURCE_TITLE_MAX = 120;
 
 export const FILE_ACCEPT = ".pdf,.md,.txt";
 export const FILE_REJECTED_MESSAGE = "Only .pdf, .md and .txt files are supported.";
@@ -15,7 +15,7 @@ export function sourceTypeFromFileName(fileName: string): "pdf" | "md" | "txt" |
   return ext === "pdf" || ext === "md" || ext === "txt" ? ext : null;
 }
 
-export type ParsedTitle = { ok: true; title: string } | { ok: false; error: string };
+type ParsedTitle = { ok: true; title: string } | { ok: false; error: string };
 
 export function parseSourceTitle(raw: string): ParsedTitle {
   const title = raw.trim();

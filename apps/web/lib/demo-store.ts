@@ -19,7 +19,7 @@ export type DemoState = {
   conversations: DemoConversation[];
 };
 
-export type StorageLike = {
+type StorageLike = {
   getItem: (key: string) => string | null;
   setItem: (key: string, value: string) => void;
 };
@@ -43,7 +43,7 @@ export type DemoActions = {
   reset: () => void;
 };
 
-export type DemoStore = DemoActions & {
+type DemoStore = DemoActions & {
   getState: () => DemoState;
   subscribe: (listener: () => void) => () => void;
 };

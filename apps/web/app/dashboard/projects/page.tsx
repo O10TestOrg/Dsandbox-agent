@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import { EmptyState } from "../../../components/EmptyState";
 import { GlassCard } from "../../../components/GlassCard";
 import { ProjectForm } from "../../../components/ProjectForm";
 import { useDemoStore } from "../../../lib/use-demo-store";
+import { useHydrated } from "../../../lib/use-hydrated";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" });
@@ -13,11 +13,7 @@ const formatDate = (iso: string) =>
 export default function ProjectsPage() {
   const { projects, createProject } = useDemoStore();
   // Saved data lives in the browser; render the list only once the client has it, to match the server HTML.
-  const hydrated = useSyncExternalStore(
-    () => () => undefined,
-    () => true,
-    () => false,
-  );
+  const hydrated = useHydrated();
 
   return (
     <section className="space-y-6">

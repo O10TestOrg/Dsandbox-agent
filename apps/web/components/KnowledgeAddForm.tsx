@@ -2,11 +2,10 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import type { DemoKnowledgeSourceType } from "@askwell/shared";
+import { PRIMARY_BUTTON } from "./Button";
 import { FILE_ACCEPT, FILE_REJECTED_MESSAGE, parseSourceTitle, sourceTypeFromFileName } from "../lib/knowledge";
 
 const input = "mt-1 w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink";
-const submit =
-  "rounded-control bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90";
 
 type Add = (source: { title: string; type: DemoKnowledgeSourceType }) => void;
 
@@ -58,7 +57,7 @@ export function KnowledgeAddForm({ onAdd }: { onAdd: Add }) {
             {textError}
           </p>
         ) : null}
-        <button type="submit" className={submit}>
+        <button type="submit" className={PRIMARY_BUTTON}>
           Add text
         </button>
       </form>
@@ -74,7 +73,7 @@ export function KnowledgeAddForm({ onAdd }: { onAdd: Add }) {
             {fileError}
           </p>
         ) : null}
-        <button type="submit" className={submit}>
+        <button type="submit" className={PRIMARY_BUTTON}>
           Add file
         </button>
       </form>

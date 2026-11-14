@@ -2,11 +2,11 @@ import { DEMO_MESSAGE_MAX_CHARS, getScriptedReply } from "@askwell/shared";
 import type { DemoActions } from "./demo-store";
 
 /** How long the bot "types" before its reply lands. */
-export const TYPING_DELAY_MS = 800;
+const TYPING_DELAY_MS = 800;
 
-export type SendActions = Pick<DemoActions, "startConversation" | "appendMessage">;
+type SendActions = Pick<DemoActions, "startConversation" | "appendMessage">;
 
-export type Validation = { ok: true; text: string } | { ok: false; error: string };
+type Validation = { ok: true; text: string } | { ok: false; error: string };
 
 /** The message trimmed, or why it can't be sent. */
 export function validateMessage(raw: string): Validation {
@@ -18,7 +18,7 @@ export function validateMessage(raw: string): Validation {
   return { ok: true, text };
 }
 
-export type SendResult = { ok: true; conversationId: string } | { ok: false; error: string };
+type SendResult = { ok: true; conversationId: string } | { ok: false; error: string };
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
