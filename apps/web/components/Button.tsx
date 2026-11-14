@@ -1,10 +1,11 @@
 import Link from "next/link";
 
-type Variant = "primary" | "ghost";
+type Variant = "primary" | "ghost" | "text";
 
 const styles: Record<Variant, string> = {
   primary: "bg-accent text-accent-ink hover:opacity-90",
   ghost: "border border-line text-ink hover:bg-raised",
+  text: "text-muted hover:text-ink",
 };
 
 export function Button({

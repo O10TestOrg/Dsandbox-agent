@@ -28,7 +28,10 @@ export default function Home() {
       <header>
         <Container className="flex items-center justify-between py-5">
           <span className="text-lg font-semibold tracking-tight">{APP_NAME}</span>
-          <Button href="/sign-up" variant="ghost">Start free</Button>
+          <nav aria-label="Account" className="flex items-center gap-1 sm:gap-2">
+            <Button href="/sign-in" variant="text">Sign in</Button>
+            <Button href="/sign-up" variant="ghost">Start free</Button>
+          </nav>
         </Container>
       </header>
 

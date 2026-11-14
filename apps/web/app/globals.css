@@ -12,6 +12,8 @@
   --line: rgb(10 10 10 / 0.12);
   --accent: #0a0a0a;
   --accent-ink: #ffffff;
+  --focus: #0a0a0a;
+  --danger: #b91c1c;
 }
 
 .theme-dark {
@@ -22,6 +24,8 @@
   --line: rgb(255 255 255 / 0.14);
   --accent: #ffffff;
   --accent-ink: #000000;
+  --focus: #ffffff;
+  --danger: #fca5a5;
 }
 
 @theme inline {
@@ -32,6 +36,8 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-ink: var(--accent-ink);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
 }
 
 @theme {
@@ -47,6 +53,23 @@ body {
   background: var(--surface);
   color: var(--ink);
   font-family: var(--font-sans);
+}
+
+/*
+ * One keyboard focus ring for every link, button and input, on both surfaces.
+ * Outline (not box-shadow) so it survives Windows forced-colors mode.
+ * In the base layer so a component can still override it with a utility.
+ */
+@layer base {
+  /* Set the color up front so `transition` doesn't fade the ring in from currentColor. */
+  * {
+    outline-color: var(--focus);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
 }
 
 /* Motion: CSS only, off for reduced-motion users. */

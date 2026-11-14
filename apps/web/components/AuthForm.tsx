@@ -14,7 +14,7 @@ const MESSAGES: Record<string, string> = {
 };
 
 const inputClass =
-  "mt-1 w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink outline-none focus:border-ink";
+  "mt-1 w-full rounded-control border border-line bg-transparent px-3 py-2.5 text-ink";
 
 export function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
@@ -72,7 +72,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         />
       </label>
       {error ? (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-danger">
           {error}
         </p>
       ) : null}
