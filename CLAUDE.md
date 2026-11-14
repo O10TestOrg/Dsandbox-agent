@@ -1,12 +1,12 @@
 # Askwell — Team Rules
 
-Askwell is an AI support chat widget for any website. A team of agents builds it, run from JSM HQ. Every agent follows this file. JSM HQ adds your role, the team, the workflow rules and your tools when your session starts.
+Askwell is an AI support chat widget for any website, built as a polished demo: any login works, and the dashboard runs on predefined data in the browser. No real auth, database, AI or payments. A team of agents builds it, run from JSM HQ. Every agent follows this file. JSM HQ adds your role, the team, the workflow rules and your tools when your session starts.
 
 ## Docs
 
 | File | Read it for |
 |---|---|
-| `docs/project.md` | What we build: features, data model, API routes, security rules, design |
+| `docs/project.md` | What we build: demo flow, features, demo data, security rules, design |
 | `docs/plan.md` | The phases, in build order (human-written) |
 
 Your task (from `get_my_task`) lists the `project.md` sections it needs. Read those, not the whole file.
@@ -43,9 +43,9 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 
 | Situation | Do |
 |---|---|
-| You need to change `packages/shared`, or change or drop an existing table or column | Stop. That's a contract change. The lead plans it; the product owner approves it. |
+| You need to change `packages/shared` and your task doesn't list it | Stop. That's a contract change. The lead plans it. |
 | The task is unclear or conflicts with `project.md` | Stop. Ask. Don't guess. |
-| You need an account, a key, or a sign-in | Stop. Say exactly what you need and where it goes (e.g. your env file). Accounts and sign-ins are the product owner's job. |
+| You think you need an account, a key, a database or a paid service | Stop. The demo needs none (`project.md` §3). Ask the lead. |
 
 ## Reviews and your next task
 
@@ -53,36 +53,22 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 - Once your PR is open, the lead may give you your next task. Take it on a new branch from `main`.
 - When review comments arrive on an earlier PR, switch back to that branch, fix, push, and return. Don't call `set_my_status` for the earlier task: it would update your current one. HQ tracks the earlier PR by itself.
 - Never start a task that needs code from one of your open PRs. If nothing independent is ready, say so.
-- Never merge your own PR, never push to `main`, never force-push a branch under review.
-
-## Database rules
-
-- The database is Neon Postgres. The app reaches it only through Drizzle in `packages/db`. Only server code imports `packages/db`.
-- There is no RLS. Every owner query goes through the owner-scoped helpers in `packages/db` (e.g. `getOwnedProject(userId, projectId)`), which filter by `owner_id`. Never query a tenant table by ID alone (see `project.md` §7 and §9).
-- Schema lives in `packages/db/schema`. After a schema change, run `pnpm db:generate` and commit the generated SQL in `packages/db/migrations`. Never edit a merged migration. Add a new table or column only if your task says so.
-- Test migrations and query functions on pglite (`packages/db/pglite.ts`). Never run a Docker database.
-- Each PR preview gets its own Neon branch and runs its migrations there. The `dev` branch is shared by every developer: never apply an unmerged migration to it. After your PR merges, run `pnpm db:migrate` against `dev` (or use the Neon MCP).
-- The Neon MCP may touch `dev` and preview branches only. Never touch the `main` (production) branch. The product owner migrates production before promoting the build.
-- Migrations are additive: the live version must keep working while one runs. Dropping or renaming a table or column happens in a later PR, once no deployed code uses it.
+- The lead merges your PR once CI passes and every review thread is answered. Never merge your own PR, never push to `main`, never force-push a branch under review.
+- After your PR merges, delete its branch: `git push origin --delete <branch>` and `git branch -D <branch>`.
 
 ## Security rules
 
 `docs/project.md` §9 lists every rule. The ones you must never break:
 
-- Read the plan on the server in every gated action. Never trust the client.
-- Every owner route reads the Better Auth session on the server. Middleware only redirects; it is not the check.
-- Owner reads and writes go through owner-scoped helpers. Check ownership (`getOwnedProject`) before any write.
-- Verify the Stripe webhook signature on the raw body before any update.
-- Render visitor messages and bot replies as text, never HTML.
-- No secret in `NEXT_PUBLIC_*`, the widget bundle, or a commit. Never remove `.env` from `.gitignore`.
+- The demo login never sends or stores a password anywhere. The sign-in card says it's a demo.
+- Render messages, titles and names as text, never HTML.
+- No secret in code or a commit. Never remove `.env` from `.gitignore`.
 
 ## Code conventions
 
 | Area | Rule |
 |---|---|
-| Types | TypeScript `strict`. No `any`. Import API types from `packages/shared`; never redefine them. |
-| API input | A zod schema per route, next to its type in `packages/shared` |
-| API errors | `{ error: { code, message } }` with the right HTTP status |
+| Types | TypeScript `strict`. No `any`. Import demo types from `packages/shared`; never redefine them. |
 | Tests | Vitest, written test-first. See Test-driven development. |
 | New dependency | Allowed. Name it and the reason in the PR body. |
 | UI | Follow `project.md` §13 Design. Reuse components in `apps/web/components`. |
@@ -102,16 +88,15 @@ Write the test before the code, for any behavior that can break:
 
 | Test it | Example |
 |---|---|
-| Every API route: its success path and the errors its contract names | 401 with no session, 402 on Free, 404 for another owner's project |
-| Owner scoping | Another user's ID returns 404, never their data |
-| Plan and quota limits, including two requests at once | The 2nd project on Free is refused; the 101st message is refused |
-| Functions with real logic | Chunking, plan-applied widget config, Stripe event → plan |
-| Migrations and query functions | On pglite |
+| Demo login | Sign in sets the cookie; `/dashboard` without it redirects to `/sign-in`; sign out clears it |
+| The demo store | Create, rename, delete, add source, reset to seed; a `localStorage` error falls back to the seed |
+| Scripted replies | A sample question gets its answer; an unrelated one gets "I don't know"; matching ignores case |
+| Functions with real logic | Usage counting, conversation ordering |
 
 **What doesn't get a test.** Every test must be able to fail for a real bug. Skip tests that:
 
 - Restate the types, or check a constant equals itself
-- Test a library instead of our code (Drizzle, Better Auth, Stripe's SDK, Next.js routing)
+- Test a library instead of our code (React, Next.js routing)
 - Snapshot markup or check CSS. Check UI and styling on the Vercel preview instead.
 - Repeat a case another test already covers
 - Only exist to raise coverage
@@ -124,5 +109,3 @@ Test behavior through the public interface (the route, the exported function), n
 |---|---|
 | `pnpm dev` | Run the app locally |
 | `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm build` | Checks. All must pass before a PR. |
-| `pnpm db:generate` | Generate a SQL migration from the Drizzle schema (`drizzle-kit generate`) |
-| `pnpm db:migrate` | Apply migrations to the branch in `DATABASE_URL_UNPOOLED` (`drizzle-kit migrate`). Never point it at production. |

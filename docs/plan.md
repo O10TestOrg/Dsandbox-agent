@@ -2,14 +2,17 @@
 
 The build order for Askwell. `docs/project.md` describes each feature in detail.
 
+**Askwell is a demo.** From Phase 2 on, there is no real auth, database, AI or payments. Any login opens a dashboard with predefined projects, knowledge and chats that show how the product would work. Phases 0–1 built backend pieces (Neon, Drizzle, Better Auth) that Phase 2 removes.
+
 ## Rules
 
 - Build phases in this order. Don't add, remove, or reorder phases.
 - Every phase after Phase 0 has two parallel lanes, one per developer, so nobody waits.
 - Each phase is one board in JSM HQ. The lead creates the board and its tasks there, with the product owner, before the phase starts. The next phase can be broken down while the current one is being built.
 - Tasks and their status live only in JSM HQ. This file never lists tasks.
-- A phase is done when all its tasks are merged and its "Done when" checks pass on the latest Vercel preview. Production goes live only once, in Phase 6.
-- Each phase lists the keys it needs. When an agent reaches a step that needs one, it stops and asks (see `CLAUDE.md`), and the product owner adds it. Agents never create accounts or handle raw keys in chat.
+- A phase is done when all its tasks are merged and its "Done when" checks pass on the latest Vercel preview. Production goes live only once, in Phase 4.
+- The lead merges a PR once CI passes and every review thread is answered. The developer then deletes the branch.
+- Each phase lists the keys it needs. When an agent reaches a step that needs one, it stops and asks (see `CLAUDE.md`), and the product owner adds it. Agents never create accounts or handle raw keys in chat. The demo phases need none.
 - Keep JSM HQ's "Export plan to docs/plan.md" off. It would overwrite this file.
 
 ---
@@ -34,7 +37,7 @@ The build order for Askwell. `docs/project.md` describes each feature in detail.
 
 ---
 
-## Phase 1 — Foundation
+## Phase 1 — Foundation (built before the demo pivot)
 
 **Goal:** the shared contract, the database, sign-in, and the public face of the app.
 
@@ -52,83 +55,49 @@ Lane B uses Better Auth's own schema from Lane A's first task; that task goes fi
 
 ---
 
-## Phase 2 — Projects + widget
+## Phase 2 — Demo foundation
 
-**Goal:** an owner can create a project and see the widget on any website. Replies are fake for now.
+**Goal:** any login opens a dashboard shell; the backend is gone.
 
-**Keys needed:** `NEXT_PUBLIC_APP_URL` (no new services)
+**Keys needed:** none. After this phase merges, the product owner may remove the Neon–Vercel integration and the old env vars from Vercel.
 
-| Lane             | Includes                                                                                                    | project.md     |
-| ---------------- | ----------------------------------------------------------------------------------------------------------- | -------------- |
-| **A — Projects** | Projects CRUD + Free/Pro limit, `public_key`, default widget config, Install page, `GET /api/widget/config` | §6.3, §6.9, §8 |
-| **B — Widget**   | Loader script (button, iframe, `postMessage`), `/embed` panel UI with mock replies, visitor ID              | §6.5           |
+| Lane                       | Includes                                                                                                                                       | project.md |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| **A — Demo data + cleanup** | Demo seed data and types in `packages/shared` (projects, knowledge sources, conversations, usage, scripted replies). Then remove `packages/db`, Better Auth, the DB migrate step, unused API types and env vars. | §5, §7     |
+| **B — Demo login + shell** | `/sign-in` and `/sign-up` accept any email and password and set a demo cookie; `proxy.ts` redirects to sign-in without it; sign out clears it. Dashboard layout with navigation and "Reset demo". | §6.2, §13  |
 
-**Done when:** create a project → copy the snippet → a plain HTML page on another origin shows the button → the panel opens and shows a mock reply.
+Lane A's cleanup task goes last: it deletes code only once Lane B no longer imports it.
 
-
----
-
-## Phase 3 — Knowledge + chat
-
-**Goal:** the bot answers real questions from the owner's documents.
-
-**Keys needed:** `OPENAI_API_KEY`, `ARCJET_KEY`, `BLOB_READ_WRITE_TOKEN` (the product owner creates a Vercel Blob store and connects it to the project)
-
-| Lane              | Includes                                                                                                                              | project.md |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| **A — Knowledge** | Paste text + upload PDF/MD/TXT straight to Vercel Blob with client-upload tokens, text extraction, chunking, embeddings, Knowledge page with source status, delete, file limit | §6.4       |
-| **B — Chat**      | Arcjet rate limit + prompt injection detection, `POST /api/widget/chat`: quota, retrieval, answer, save, count. Connect the `/embed` panel to it.                         | §6.6       |
-
-Lane B tests retrieval with seeded chunks until Lane A is merged.
-
-**Done when:** upload a PDF → ask about it on the plain HTML page → correct answer; an unrelated question → "I don't know"; the 21st message in a minute is refused.
-
+**Done when:** on the preview, any email and password land on the dashboard; sign out returns to sign-in; the preview builds with no database or auth env vars.
 
 ---
 
-## Phase 4 — Conversations + analytics
+## Phase 3 — Demo screens
 
-**Goal:** the owner sees what visitors ask, and we see how the product is used.
+**Goal:** every dashboard screen works on predefined data.
 
-**Keys needed:** none. The product owner turns on Web Analytics and Speed Insights in the Vercel project.
+**Keys needed:** none
 
-| Lane                          | Includes                                                                                             | project.md  |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------- | ----------- |
-| **A — Conversations + usage** | Conversations list + thread, usage display per project                                               | §6.7, §6.12 |
-| **B — Analytics**             | Vercel Analytics + Speed Insights, `trackEvent` and the `events` table writes, funnel query, AI usage columns filled by the chat route, server error logging | §6.11       |
+| Lane                              | Includes                                                                                                                                        | project.md       |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| **A — Projects + knowledge**      | The demo store (seeded from `packages/shared`, saved in `localStorage`, reset). Projects list, create, rename, delete. Knowledge: list sources with status, add text or a file (fake processing → ready), delete. | §6.3, §6.4, §7   |
+| **B — Conversations + bot + usage** | Conversations list and thread. "Try your bot" chat panel per project with scripted replies; a new chat shows up in Conversations. Usage per project. | §6.5, §6.6, §6.7 |
 
-**Done when:** a widget chat appears in Conversations after refresh; the usage count goes up; Vercel Analytics shows page views; the funnel query returns each step; the bot reply row has its tokens and cost.
+Lane B uses the seed data read-only until Lane A's store is merged.
 
-
----
-
-## Phase 5 — Billing + customize
-
-**Goal:** Free vs Pro works end to end.
-
-**Keys needed:** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRO_PRICE_ID`. In the Stripe dashboard (test mode): a product "Pro" with a monthly price, the Customer Portal turned on, and a webhook to `/api/stripe/webhook` with the `customer.subscription.*` events. For previews, the webhook points at the latest preview URL with the bypass secret, or developers use `stripe listen` locally.
-
-| Lane              | Includes                                                                                                                       | project.md |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
-| **A — Billing**   | Stripe Checkout route, Customer Portal route, Stripe webhook → `user.plan`, billing page | §6.10      |
-| **B — Customize** | Customize page with live preview, `PATCH /api/projects/:id/config` with 402 for Free, plan-applied config in the widget, badge | §6.8       |
-
-Lane B builds the 402 path first, then tests Pro by setting `user.plan` by hand until Lane A is merged.
-
-**Done when:** Free save → 402 → upgrade with a Stripe test card → save works → the widget shows the new color on reload.
-
+**Done when:** on the preview, click through every screen; a "Try your bot" chat appears in Conversations and raises Usage; "Reset demo" restores the seed data.
 
 ---
 
-## Phase 6 — Harden + launch
+## Phase 4 — Polish + launch
 
-**Goal:** the core flow works on `main`, with no open security issues.
+**Goal:** the demo flow works on production.
 
-**Keys needed:** `LANDING_WIDGET_KEY` (the public key of a project about Askwell itself, created in the app). At the end, the product owner migrates the Neon `main` branch, sets Vercel's production variables, and points the production Stripe webhook at the production URL.
+**Keys needed:** none. At the end, the product owner promotes the build.
 
-| Lane             | Includes                                                                                                    | project.md |
-| ---------------- | ----------------------------------------------------------------------------------------------------------- | ---------- |
-| **A — Security** | Fix open review findings, security headers (`frame-ancestors`), CORS check, owner-scope test on every route, final pass on every rule in §9 | §9         |
-| **B — Launch**   | Landing page runs the app's own widget, responsive and empty-state polish, run the full core flow on `main` | §2, §6.1   |
+| Lane                 | Includes                                                                                   | project.md |
+| -------------------- | ------------------------------------------------------------------------------------------ | ---------- |
+| **A — Polish**       | Responsive down to 375 px, empty, loading and error states on every screen                 | §13        |
+| **B — Landing + launch** | Landing page copy and CTA ("Try the demo"), pricing shown as display only, run the demo flow on `main` | §2, §6.1   |
 
-**Done when:** the product owner applies every migration to the Neon `main` branch, sets Vercel's production variables and promotes the build; then all nine steps of the core flow (§2) pass on the production URL.
+**Done when:** the product owner promotes the build; every step of the demo flow (§2) passes on the production URL.
