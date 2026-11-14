@@ -16,7 +16,9 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
   const project = store.projects.find((p) => p.id === projectId);
   const messages = store.conversations.find((c) => c.id === conversationId)?.messages ?? [];
   const valid = validateMessage(draft).ok;
-  const over = draft.length > DEMO_MESSAGE_MAX_CHARS;
+  // Same rule as validateMessage: the trimmed text is what counts.
+  const length = draft.trim().length;
+  const over = length > DEMO_MESSAGE_MAX_CHARS;
 
   async function send() {
     if (typing) return;
@@ -150,7 +152,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
             {error ?? (over ? `Too long: at most ${DEMO_MESSAGE_MAX_CHARS} characters.` : "")}
           </p>
           <p className={over ? "text-danger" : "text-muted"}>
-            {draft.length}/{DEMO_MESSAGE_MAX_CHARS}
+            {length}/{DEMO_MESSAGE_MAX_CHARS}
           </p>
         </div>
       </form>
