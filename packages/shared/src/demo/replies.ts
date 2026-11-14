@@ -14,7 +14,7 @@ const SCRIPTS: Record<string, ScriptedAnswer[]> = {
     { keywords: ["price", "prices", "pricing", "cost", "how much", "plan", "plans"], answer: "Taskly is free for up to 3 users. Team is $8 per user per month." },
     { keywords: ["trial", "free"], answer: "Yes, Team comes with a 14-day free trial. No card needed." },
     { keywords: ["slack", "integration", "integrations", "github", "calendar"], answer: "Taskly connects with Slack, Google Calendar and GitHub from Settings → Integrations." },
-    { keywords: ["start", "begin", "setup", "set up", "onboard"], answer: "Create a workspace, add your first project and invite your team. It takes about two minutes." },
+    { keywords: ["start", "started", "begin", "setup", "set up", "onboard"], answer: "Create a workspace, add your first project and invite your team. It takes about two minutes." },
   ],
   "demo-store": [
     { keywords: ["shipping", "delivery", "deliver", "ship"], answer: "Standard shipping takes 3–5 working days. Orders over $50 ship free." },

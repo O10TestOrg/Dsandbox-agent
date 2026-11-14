@@ -33,6 +33,10 @@ describe("getScriptedReply", () => {
     expect(getScriptedReply(coffee, "Do you have a boat?")).toBe(DEMO_UNKNOWN_REPLY);
   });
 
+  it("answers the seeded onboarding question on demo-saas", () => {
+    expect(getScriptedReply("demo-saas", "How do I get started?")).toMatch(/workspace/i);
+  });
+
   it("says it doesn't know for an unknown project", () => {
     expect(getScriptedReply("nope", "opening hours?")).toBe(DEMO_UNKNOWN_REPLY);
   });
