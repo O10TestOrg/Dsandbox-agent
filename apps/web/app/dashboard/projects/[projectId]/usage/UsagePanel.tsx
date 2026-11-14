@@ -33,7 +33,10 @@ export function UsagePanel({ projectId }: { projectId: string }) {
         aria-valuetext={`${fmt.format(used)} of ${fmt.format(FREE_LIMIT)} messages`}
         className="h-3 w-full overflow-hidden rounded-full bg-line"
       >
-        <div className="h-full rounded-full bg-accent transition-[width] motion-reduce:transition-none" style={{ width: `${percent}%` }} />
+        <div
+          className="h-full w-full origin-left bg-accent transition-transform motion-reduce:transition-none"
+          style={{ transform: `scaleX(${percent / 100})` }}
+        />
       </div>
       <p className="text-sm text-muted">
         This project is on the Free plan. This is a demo: nothing is charged and no messages are blocked, even over the
