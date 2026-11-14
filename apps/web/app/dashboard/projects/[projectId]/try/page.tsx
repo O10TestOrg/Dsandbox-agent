@@ -1,6 +1,7 @@
+import { APP_NAME } from "@askwell/shared";
 import { TryBotPanel } from "../../../../../components/TryBotPanel";
 
-export const metadata = { title: "Try your bot" };
+export const metadata = { title: `Try your bot · ${APP_NAME}` };
 
 export default async function Page({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;

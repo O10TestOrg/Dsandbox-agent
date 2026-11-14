@@ -34,6 +34,7 @@ export default function KnowledgePage() {
 
   return (
     <section className="space-y-6">
+      <h1 className="text-2xl font-semibold tracking-tight">Knowledge</h1>
       <GlassCard className="p-5">
         <KnowledgeAddForm onAdd={(source) => addSource(projectId, source)} />
       </GlassCard>

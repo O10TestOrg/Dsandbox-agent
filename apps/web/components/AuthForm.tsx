@@ -42,7 +42,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex w-full items-center justify-center rounded-control bg-accent px-5 py-3 text-sm font-medium text-accent-ink transition hover:opacity-90 disabled:opacity-60"
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-control bg-accent px-5 py-3 text-sm font-medium text-accent-ink transition hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}
       </button>

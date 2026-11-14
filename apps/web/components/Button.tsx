@@ -10,8 +10,9 @@ const styles: Record<Variant, string> = {
 
 /** Class strings for native <button>s that match <Button>. Shared so every screen looks the same. */
 export const PRIMARY_BUTTON =
-  "rounded-control bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90";
-export const GHOST_BUTTON = "rounded-control border border-line px-3 py-2 text-sm transition hover:bg-raised";
+  "inline-flex min-h-10 items-center justify-center rounded-control bg-accent px-5 py-2.5 text-sm font-medium text-accent-ink transition hover:opacity-90";
+export const GHOST_BUTTON =
+  "inline-flex min-h-10 items-center justify-center rounded-control border border-line px-3 py-2 text-sm transition hover:bg-raised";
 
 export function Button({
   href,

@@ -12,7 +12,7 @@ export function ConversationThread({ projectId, conversationId }: { projectId: s
 
   return (
     <section className="space-y-4">
-      <Link href={back} className="text-sm text-muted underline-offset-4 hover:underline">
+      <Link href={back} className="inline-flex min-h-10 items-center text-sm text-muted underline-offset-4 hover:underline">
         ← Back to conversations
       </Link>
       {!conversation ? (
