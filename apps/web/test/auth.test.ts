@@ -1,52 +1,78 @@
-import { eq } from "drizzle-orm";
-import { beforeAll, describe, expect, it, vi } from "vitest";
-import { createTestDb } from "../../../packages/db/pglite";
-import { user } from "../../../packages/db/schema";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const testDb = await createTestDb();
+const store = new Map<string, string>();
+const cookieJar = {
+  get: (name: string) => (store.has(name) ? { name, value: store.get(name) as string } : undefined),
+  set: (name: string, value: string) => void store.set(name, value),
+  delete: (name: string) => void store.delete(name),
+};
+class Redirect extends Error {
+  constructor(public url: string) {
+    super(`redirect:${url}`);
+  }
+}
 
-vi.mock("server-only", () => ({}));
-vi.mock("@askwell/db/client", () => ({ getDb: () => testDb.db }));
+vi.mock("next/headers", () => ({ cookies: async () => cookieJar }));
+vi.mock("next/navigation", () => ({
+  redirect: (url: string) => {
+    throw new Redirect(url);
+  },
+}));
 
-type Auth = ReturnType<typeof import("../lib/auth").getAuth>;
-let auth: Auth;
+const { demoSignIn, demoSignOut } = await import("../app/(auth)/actions");
+const { getDemoName, displayNameFromEmail, DEMO_COOKIE, MAX_NAME_LENGTH } = await import("../lib/demo-session");
 
-beforeAll(async () => {
-  vi.stubEnv("BETTER_AUTH_SECRET", "test-secret-test-secret-test-secret-12345");
-  vi.stubEnv("BETTER_AUTH_URL", "http://localhost:3000");
-  auth = (await import("../lib/auth")).getAuth();
-});
-
-const planOf = async (email: string) => {
-  const [row] = await testDb.db.select().from(user).where(eq(user.email, email));
-  return row?.plan;
+const form = (fields: Record<string, string>) => {
+  const data = new FormData();
+  for (const [k, v] of Object.entries(fields)) data.set(k, v);
+  return data;
 };
 
-describe("email sign-up", () => {
-  it("creates a user on the free plan", async () => {
-    const res = await auth.api.signUpEmail({
-      body: { name: "Ada", email: "ada@example.com", password: "correct horse battery" },
+beforeEach(() => store.clear());
+
+describe("displayNameFromEmail", () => {
+  it("uses the part before the @", () => {
+    expect(displayNameFromEmail("ada@example.com")).toBe("ada");
+  });
+  it("uses the whole text when there is no @", () => {
+    expect(displayNameFromEmail("  ada  ")).toBe("ada");
+  });
+});
+
+describe("demo sign in", () => {
+  it("sets the cookie from the email and goes to the dashboard", async () => {
+    await expect(demoSignIn(null, form({ email: "ada@example.com" }))).rejects.toMatchObject({
+      url: "/dashboard",
     });
-    expect(res.user.email).toBe("ada@example.com");
-    expect(await planOf("ada@example.com")).toBe("free");
+    expect(store.get(DEMO_COOKIE)).toBe("ada");
+    expect(await getDemoName()).toBe("ada");
   });
 
-  it("never lets the client choose the plan", async () => {
-    // plan is not an accepted input; the cast only simulates a hostile request body.
-    const attempt = auth.api.signUpEmail({
-      body: { name: "Eve", email: "eve@example.com", password: "correct horse battery", plan: "pro" } as never,
-    });
-    await attempt.catch(() => undefined); // rejecting the field is fine; accepting it is not
-    expect(await planOf("eve@example.com")).not.toBe("pro");
+  it("refuses an empty email", async () => {
+    const res = await demoSignIn(null, form({ email: "  " }));
+    expect(res?.error).toBeTruthy();
+    expect(store.has(DEMO_COOKIE)).toBe(false);
   });
 
-  it("never lets the client set a stripe customer id", async () => {
-    await auth.api
-      .signUpEmail({
-        body: { name: "Mal", email: "mal@example.com", password: "correct horse battery", stripeCustomerId: "cus_evil" } as never,
-      })
-      .catch(() => undefined);
-    const [row] = await testDb.db.select().from(user).where(eq(user.email, "mal@example.com"));
-    expect(row?.stripeCustomerId ?? null).toBeNull();
+  it("never reads a password field, even if one is submitted", async () => {
+    const data = form({ email: "ada@example.com", password: "hunter2" });
+    const get = vi.spyOn(data, "get");
+    await demoSignIn(null, data).catch(() => undefined);
+    expect(get.mock.calls.map(([key]) => key)).not.toContain("password");
+    expect([...store.values()].join()).not.toContain("hunter2");
+  });
+
+  it("caps a very long email so the cookie stays small", async () => {
+    await demoSignIn(null, form({ email: `${"a".repeat(5000)}@example.com` })).catch(() => undefined);
+    expect(store.get(DEMO_COOKIE)).toBe("a".repeat(MAX_NAME_LENGTH));
+  });
+});
+
+describe("demo sign out", () => {
+  it("clears the cookie and goes to /sign-in", async () => {
+    store.set(DEMO_COOKIE, "ada");
+    await expect(demoSignOut()).rejects.toMatchObject({ url: "/sign-in" });
+    expect(store.has(DEMO_COOKIE)).toBe(false);
+    expect(await getDemoName()).toBeNull();
   });
 });
