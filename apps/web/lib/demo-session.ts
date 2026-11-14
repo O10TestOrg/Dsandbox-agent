@@ -19,8 +19,18 @@ export async function getDemoName(): Promise<string | null> {
   return value ? value : null;
 }
 
+/**
+ * Not a secret, but the flags cost nothing: no script reads it (httpOnly), and it only travels over https in
+ * production (secure). Local dev runs on http, so `secure` is off there or the browser would drop the cookie.
+ */
 export async function setDemoName(name: string): Promise<void> {
-  (await cookies()).set(DEMO_COOKIE, name, { path: "/", sameSite: "lax", maxAge: 60 * 60 * 24 * 7 });
+  (await cookies()).set(DEMO_COOKIE, name, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
 }
 
 export async function clearDemoName(): Promise<void> {
