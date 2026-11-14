@@ -15,7 +15,7 @@ const steps = [
 
 export default function Home() {
   return (
-    <div className="theme-dark min-h-screen overflow-x-hidden bg-paper text-ink">
+    <div className="theme-dark min-h-screen overflow-x-clip bg-paper text-ink">
       <header className="sticky top-0 z-10 border-b border-line bg-paper">
         <Container className="flex items-center justify-between gap-4">
           <span>{APP_NAME}</span>
