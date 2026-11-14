@@ -20,7 +20,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 const { demoSignIn, demoSignOut } = await import("../app/(auth)/actions");
-const { getDemoName, displayNameFromEmail, DEMO_COOKIE } = await import("../lib/demo-session");
+const { getDemoName, displayNameFromEmail, DEMO_COOKIE, MAX_NAME_LENGTH } = await import("../lib/demo-session");
 
 const form = (fields: Record<string, string>) => {
   const data = new FormData();
@@ -41,28 +41,30 @@ describe("displayNameFromEmail", () => {
 
 describe("demo sign in", () => {
   it("sets the cookie from the email and goes to the dashboard", async () => {
-    await expect(demoSignIn(null, form({ email: "ada@example.com", password: "x" }))).rejects.toMatchObject({
+    await expect(demoSignIn(null, form({ email: "ada@example.com" }))).rejects.toMatchObject({
       url: "/dashboard",
     });
     expect(store.get(DEMO_COOKIE)).toBe("ada");
     expect(await getDemoName()).toBe("ada");
   });
 
-  it("refuses an empty password and sets no cookie", async () => {
-    const res = await demoSignIn(null, form({ email: "ada@example.com", password: "" }));
-    expect(res?.error).toBeTruthy();
-    expect(store.has(DEMO_COOKIE)).toBe(false);
-  });
-
   it("refuses an empty email", async () => {
-    const res = await demoSignIn(null, form({ email: "  ", password: "x" }));
+    const res = await demoSignIn(null, form({ email: "  " }));
     expect(res?.error).toBeTruthy();
     expect(store.has(DEMO_COOKIE)).toBe(false);
   });
 
-  it("never stores the password", async () => {
-    await demoSignIn(null, form({ email: "ada@example.com", password: "hunter2" })).catch(() => undefined);
+  it("never reads a password field, even if one is submitted", async () => {
+    const data = form({ email: "ada@example.com", password: "hunter2" });
+    const get = vi.spyOn(data, "get");
+    await demoSignIn(null, data).catch(() => undefined);
+    expect(get.mock.calls.map(([key]) => key)).not.toContain("password");
     expect([...store.values()].join()).not.toContain("hunter2");
+  });
+
+  it("caps a very long email so the cookie stays small", async () => {
+    await demoSignIn(null, form({ email: `${"a".repeat(5000)}@example.com` })).catch(() => undefined);
+    expect(store.get(DEMO_COOKIE)).toBe("a".repeat(MAX_NAME_LENGTH));
   });
 });
 
