@@ -13,12 +13,16 @@ permissions:
   contents: read
 
 jobs:
-  checks:
-    name: typecheck, lint, test, build
+  ci:
+    # One job = one status check named "ci". Make "ci" the required check on main.
+    name: ci
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Install and package scripts run later; don't leave the job token in .git/config.
+          persist-credentials: false
 
       # pnpm version comes from "packageManager" in package.json.
       - uses: pnpm/action-setup@v4
