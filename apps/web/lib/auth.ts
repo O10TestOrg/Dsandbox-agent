@@ -3,7 +3,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import * as schema from "@askwell/db/schema";
-import type { Database } from "@askwell/db/client";
+import { getDb, type Database } from "@askwell/db/client";
 
 /**
  * Base URL: BETTER_AUTH_URL when set (local, production). On Vercel previews it is
@@ -23,7 +23,7 @@ function resolveOrigins(): { baseURL: string | undefined; trustedOrigins: string
 const { baseURL, trustedOrigins } = resolveOrigins();
 
 type Auth = ReturnType<typeof createAuth>;
-let instance: Promise<Auth> | undefined;
+let instance: Auth | undefined;
 
 function createAuth(db: Database) {
   return betterAuth({
@@ -44,10 +44,10 @@ function createAuth(db: Database) {
 }
 
 /**
- * The Better Auth instance, created on first use. The db client throws at import when
- * DATABASE_URL is unset, so it is imported here, at request time, never at `next build`.
+ * The Better Auth instance, created on first use. It needs the db client, and `getDb()`
+ * requires DATABASE_URL, so it is built at request time, never at `next build`.
  */
-export function getAuth(): Promise<Auth> {
-  instance ??= import("@askwell/db/client").then(({ db }) => createAuth(db));
+export function getAuth(): Auth {
+  instance ??= createAuth(getDb());
   return instance;
 }
