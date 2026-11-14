@@ -5,9 +5,10 @@ import { useEffect, useMemo } from "react";
 import type { DemoKnowledgeSourceStatus } from "@askwell/shared";
 import { Icon } from "../../../../../components/Icon";
 import { EmptyState } from "../../../../../components/EmptyState";
-import { StatusDot, type Tone } from "../../../../../components/Signal";
+import { type Tone } from "../../../../../components/Signal";
+import { StatusBadge } from "../../../../../components/StatusBadge";
 import { Surface } from "../../../../../components/Surface";
-import { Eyebrow, MetaText } from "../../../../../components/Text";
+import { Table } from "../../../../../components/Table";
 import { KnowledgeAddForm } from "../../../../../components/KnowledgeAddForm";
 import { msUntilReady } from "../../../../../lib/knowledge";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
@@ -23,6 +24,11 @@ const STATUS_LABEL: Record<DemoKnowledgeSourceStatus, string> = {
   processing: "Processing",
   ready: "Ready",
   failed: "Failed",
+};
+
+const formatDate = (iso: string) => {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("en-US", { dateStyle: "medium", timeZone: "UTC" });
 };
 
 export default function KnowledgePage() {
@@ -55,33 +61,48 @@ export default function KnowledgePage() {
       {mine.length === 0 ? (
         <EmptyState title="No knowledge yet">Add text or a file above so your bot can answer.</EmptyState>
       ) : (
-        <div className="space-y-2">
-          <Eyebrow>Sources</Eyebrow>
-          <ul className="divide-y divide-line border-y border-line">
-            {mine.map((source) => (
-              <li key={source.id} className="flex items-center justify-between gap-3 py-3">
-                <div className="min-w-0">
-                  <p className="break-words text-body">{source.title}</p>
-                  <p className="mt-1 flex flex-wrap items-center gap-3">
-                    <MetaText className="uppercase">{source.type}</MetaText>
-                    <span className="inline-flex items-center gap-1.5 text-caption text-ink">
-                      <StatusDot tone={TONE[source.status]} />
-                      {STATUS_LABEL[source.status]}
-                    </span>
-                  </p>
-                </div>
+        <Table
+          label="Sources"
+          columns={[
+            { key: "name", header: "Name", primary: true, cell: (s) => s.title },
+            {
+              key: "type",
+              header: "Type",
+              cell: (s) => <span className="uppercase text-muted">{s.type}</span>,
+            },
+            {
+              key: "status",
+              header: "Status",
+              cell: (s) => <StatusBadge tone={TONE[s.status]}>{STATUS_LABEL[s.status]}</StatusBadge>,
+            },
+            {
+              key: "added",
+              header: "Added",
+              cell: (s) => (
+                <time dateTime={s.createdAt} className="tabular-nums text-muted">
+                  {formatDate(s.createdAt)}
+                </time>
+              ),
+            },
+            {
+              key: "delete",
+              header: "Delete",
+              action: true,
+              cell: (s) => (
                 <button
                   type="button"
-                  onClick={() => deleteSource(source.id)}
-                  aria-label={`Delete ${source.title}`}
-                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill text-muted transition-colors hover:bg-surface hover:text-ink"
+                  onClick={() => deleteSource(s.id)}
+                  aria-label={`Delete ${s.title}`}
+                  className="inline-flex size-12 items-center justify-center rounded-pill text-muted transition-colors hover:bg-paper hover:text-ink"
                 >
                   <Icon name="trash" />
                 </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+              ),
+            },
+          ]}
+          rows={mine}
+          rowKey={(s) => s.id}
+        />
       )}
     </section>
   );
