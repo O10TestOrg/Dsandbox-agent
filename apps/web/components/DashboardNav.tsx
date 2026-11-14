@@ -8,9 +8,6 @@ import { GlassCard } from "./GlassCard";
 
 const LINKS = [
   { href: "/dashboard/projects", label: "Projects" },
-  { href: "/dashboard/knowledge", label: "Knowledge" },
-  { href: "/dashboard/conversations", label: "Conversations" },
-  { href: "/dashboard/usage", label: "Usage" },
 ];
 
 const small =
