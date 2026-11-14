@@ -1,0 +1,13 @@
+import { TryBotPanel } from "../../../../../components/TryBotPanel";
+
+export const metadata = { title: "Try your bot" };
+
+export default async function Page({ params }: { params: Promise<{ projectId: string }> }) {
+  const { projectId } = await params;
+  return (
+    <section className="space-y-4">
+      <h1 className="text-2xl font-semibold tracking-tight">Try your bot</h1>
+      <TryBotPanel projectId={projectId} />
+    </section>
+  );
+}
