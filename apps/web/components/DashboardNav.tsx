@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { demoSignOut } from "../app/(auth)/actions";
+import { useDemoStore } from "../lib/use-demo-store";
 import { GlassCard } from "./GlassCard";
 
 const LINKS = [
@@ -12,24 +13,12 @@ const LINKS = [
   { href: "/dashboard/usage", label: "Usage" },
 ];
 
-const STORAGE_PREFIX = "askwell:";
-
-function resetDemo() {
-  try {
-    for (const key of Object.keys(localStorage)) {
-      if (key.startsWith(STORAGE_PREFIX)) localStorage.removeItem(key);
-    }
-  } catch {
-    // Storage can be blocked; there is nothing to reset then.
-  }
-  window.location.reload();
-}
-
 const small =
   "shrink-0 rounded-control border border-line px-3 py-2 text-sm text-ink transition hover:bg-raised";
 
 export function DashboardNav({ name, appName }: { name: string; appName: string }) {
   const pathname = usePathname();
+  const { reset } = useDemoStore();
   return (
     <header className="sticky top-0 z-10 p-3 sm:p-4">
       <GlassCard className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
@@ -58,7 +47,7 @@ export function DashboardNav({ name, appName }: { name: string; appName: string 
         </nav>
         <div className="flex items-center gap-2">
           <span className="hidden max-w-40 truncate text-sm text-muted md:inline">{name}</span>
-          <button type="button" onClick={resetDemo} className={small}>
+          <button type="button" onClick={reset} className={small}>
             Reset demo
           </button>
           <form action={demoSignOut}>
