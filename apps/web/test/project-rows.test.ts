@@ -58,6 +58,20 @@ describe("projectRows", () => {
     expect(row?.updatedAt).toBe("2026-09-01T00:00:00.000Z");
   });
 
+  it("still uses a conversation's valid message times when one message date is unreadable", () => {
+    const c: DemoConversation = {
+      id: "c1",
+      projectId: "a",
+      createdAt: "2026-09-02T00:00:00Z",
+      messages: [
+        { id: "m1", role: "visitor", body: "hi", createdAt: "not a date" },
+        { id: "m2", role: "bot", body: "hello", createdAt: "2026-09-12T00:00:00Z" },
+      ],
+    };
+    const [row] = projectRows([project("a", "2026-09-01T00:00:00Z")], [], [c]);
+    expect(row?.updatedAt).toBe("2026-09-12T00:00:00.000Z");
+  });
+
   it("keeps the store's project order", () => {
     const rows = projectRows([project("z", "2026-09-01T00:00:00Z"), project("a", "2026-09-09T00:00:00Z")], [], []);
     expect(rows.map((r) => r.project.id)).toEqual(["z", "a"]);

@@ -1,5 +1,4 @@
 import type { DemoConversation, DemoKnowledgeSource, DemoProject } from "@askwell/shared";
-import { latestActivity } from "./conversations";
 
 export type ProjectRow = {
   project: DemoProject;
@@ -22,8 +21,8 @@ export function projectRows(
     const times = [
       Date.parse(project.createdAt),
       ...mySources.map((s) => Date.parse(s.createdAt)),
-      ...myConversations.map(latestActivity),
-    ].filter((t) => !Number.isNaN(t));
+      ...myConversations.flatMap((c) => [c.createdAt, ...c.messages.map((m) => m.createdAt)].map(Date.parse)),
+    ].filter((t) => !Number.isNaN(t)); // Each date on its own: one unreadable date never hides the valid ones.
     return {
       project,
       sources: mySources.length,
