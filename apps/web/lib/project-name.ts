@@ -1,6 +1,6 @@
 export const PROJECT_NAME_MAX = 60;
 
-export type ParsedName = { ok: true; name: string } | { ok: false; error: string };
+type ParsedName = { ok: true; name: string } | { ok: false; error: string };
 
 /** A project name is required, trimmed, and at most 60 characters. */
 export function parseProjectName(raw: string): ParsedName {

@@ -4,14 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { demoSignOut } from "../app/(auth)/actions";
 import { useDemoStore } from "../lib/use-demo-store";
+import { GHOST_BUTTON } from "./Button";
 import { GlassCard } from "./GlassCard";
 
 const LINKS = [
   { href: "/dashboard/projects", label: "Projects" },
 ];
 
-const small =
-  "shrink-0 rounded-control border border-line px-3 py-2 text-sm text-ink transition hover:bg-raised";
+const small = `shrink-0 ${GHOST_BUTTON}`;
 
 export function DashboardNav({ name, appName }: { name: string; appName: string }) {
   const pathname = usePathname();

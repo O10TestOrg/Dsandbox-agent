@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
+import { GHOST_BUTTON } from "../../../../components/Button";
 import { ProjectForm } from "../../../../components/ProjectForm";
 import { ProjectTabs } from "../../../../components/ProjectTabs";
 import { useDemoStore } from "../../../../lib/use-demo-store";
-
-const button = "rounded-control border border-line px-3 py-2 text-sm transition hover:bg-raised";
+import { useHydrated } from "../../../../lib/use-hydrated";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const { projectId } = useParams<{ projectId: string }>();
@@ -16,11 +16,7 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const [renaming, setRenaming] = useState(false);
   const [deleted, setDeleted] = useState(false);
   // Saved data lives in the browser, so the server can't know if this id exists. Wait for the client.
-  const hydrated = useSyncExternalStore(
-    () => () => undefined,
-    () => true,
-    () => false,
-  );
+  const hydrated = useHydrated();
 
   if (!hydrated || deleted) return <p className="text-sm text-muted">Loading…</p>;
 
@@ -67,10 +63,10 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
         )}
         {renaming ? null : (
           <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => setRenaming(true)} className={button}>
+            <button type="button" onClick={() => setRenaming(true)} className={GHOST_BUTTON}>
               Rename
             </button>
-            <button type="button" onClick={onDelete} className={`${button} text-danger`}>
+            <button type="button" onClick={onDelete} className={`${GHOST_BUTTON} text-danger`}>
               Delete
             </button>
           </div>

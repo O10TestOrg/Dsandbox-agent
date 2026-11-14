@@ -1,6 +1,6 @@
 import type { DemoConversation } from "@askwell/shared";
 
-export const PREVIEW_MAX_CHARS = 80;
+const PREVIEW_MAX_CHARS = 80;
 
 /** Time of the latest message (ms since epoch); the conversation's own start when it has none. */
 export function latestActivity(c: DemoConversation): number {

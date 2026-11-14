@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import type { DemoKnowledgeSourceStatus } from "@askwell/shared";
+import { GHOST_BUTTON } from "../../../../../components/Button";
 import { EmptyState } from "../../../../../components/EmptyState";
 import { GlassCard } from "../../../../../components/GlassCard";
 import { KnowledgeAddForm } from "../../../../../components/KnowledgeAddForm";
@@ -56,7 +57,7 @@ export default function KnowledgePage() {
                   type="button"
                   onClick={() => deleteSource(source.id)}
                   aria-label={`Delete ${source.title}`}
-                  className="shrink-0 rounded-control border border-line px-3 py-2 text-sm transition hover:bg-raised"
+                  className={`shrink-0 ${GHOST_BUTTON}`}
                 >
                   Delete
                 </button>
