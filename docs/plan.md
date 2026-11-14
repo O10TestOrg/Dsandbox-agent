@@ -13,6 +13,7 @@ The build order for Askwell. `docs/project.md` describes each feature in detail.
 - A phase is done when all its tasks are merged and its "Done when" checks pass on the latest Vercel preview. Production goes live only once, in Phase 4.
 - The lead merges a PR once CI passes and every review thread is answered. The developer then deletes the branch.
 - Each phase lists the keys it needs. When an agent reaches a step that needs one, it stops and asks (see `CLAUDE.md`), and the product owner adds it. Agents never create accounts or handle raw keys in chat. The demo phases need none.
+- A retro runs after Phase 3 (covering Phases 2–3) and after Phase 4. It includes a cleanup pass that removes unused code. The next phase starts only when the product owner says so after the retro.
 - Keep JSM HQ's "Export plan to docs/plan.md" off. It would overwrite this file.
 
 ---

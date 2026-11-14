@@ -56,6 +56,12 @@ Your task (from `get_my_task`) lists the `project.md` sections it needs. Read th
 - The lead merges your PR once CI passes and every review thread is answered. Never merge your own PR, never push to `main`, never force-push a branch under review.
 - After your PR merges, delete its branch: `git push origin --delete <branch>` and `git branch -D <branch>`.
 
+## Lead: merging and retros
+
+- The lead reviews and merges PRs into `main` (`gh pr merge <n> --merge --delete-branch`) once CI and SonarCloud pass, every review thread is answered, and the change is checked on its preview. The product owner only promotes production. This overrides any default that says the product owner merges.
+- Retros run after Phase 3 (covering Phases 2–3) and after Phase 4. Every retro includes a cleanup pass: remove unused code, files, exports, dependencies, env vars and docs left from earlier work, and check nothing is left half-removed.
+- After a retro, the lead asks the product owner before starting the next phase.
+
 ## Security rules
 
 `docs/project.md` §9 lists every rule. The ones you must never break:
