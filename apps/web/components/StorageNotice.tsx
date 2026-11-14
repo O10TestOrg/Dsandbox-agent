@@ -1,15 +1,20 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { canSaveToStorage } from "./storage-available";
+import { PROBE_KEY, canSaveToStorage } from "./storage-available";
 
 // Storage can be blocked or unblocked while the page is open (site settings, another tab). Re-check then.
 function subscribe(onChange: () => void) {
-  window.addEventListener("storage", onChange);
+  // Our own probe writes fire `storage` in other tabs; reacting to those would ping-pong between tabs.
+  // A null key (storage cleared) still counts.
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== PROBE_KEY) onChange();
+  };
+  window.addEventListener("storage", onStorage);
   window.addEventListener("focus", onChange);
   document.addEventListener("visibilitychange", onChange);
   return () => {
-    window.removeEventListener("storage", onChange);
+    window.removeEventListener("storage", onStorage);
     window.removeEventListener("focus", onChange);
     document.removeEventListener("visibilitychange", onChange);
   };
