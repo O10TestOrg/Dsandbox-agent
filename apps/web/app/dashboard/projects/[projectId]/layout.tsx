@@ -1,12 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { buttonClass } from "../../../../components/Button";
+import { Button, ButtonLink } from "../../../../components/Button";
+import { EmptyState } from "../../../../components/EmptyState";
+import { Icon } from "../../../../components/Icon";
+import { Link } from "../../../../components/Link";
 import { ProjectForm } from "../../../../components/ProjectForm";
 import { ProjectTabs } from "../../../../components/ProjectTabs";
 import { LoadingScreen, Skeleton } from "../../../../components/Skeleton";
+import { Eyebrow } from "../../../../components/Text";
 import { useDemoStore } from "../../../../lib/use-demo-store";
 import { useHydrated } from "../../../../lib/use-hydrated";
 
@@ -22,9 +25,10 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   if (!hydrated || deleted) {
     return (
       <LoadingScreen>
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-40 w-full rounded-square" />
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-48 w-full rounded-square" />
       </LoadingScreen>
     );
   }
@@ -32,12 +36,11 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   const project = projects.find((p) => p.id === projectId);
   if (!project) {
     return (
-      <div className="space-y-2">
-        <h1 className="text-2xl tracking-tight">Project not found</h1>
-        <p className="text-sm text-muted">It may have been deleted.</p>
-        <Link href="/dashboard/projects" className="inline-flex min-h-12 items-center text-sm underline">
-          Back to projects
-        </Link>
+      <div className="space-y-6">
+        <h1 className="text-heading">Project not found</h1>
+        <EmptyState title="This project doesn't exist" action={<ButtonLink href="/dashboard/projects" variant="secondary">All projects</ButtonLink>}>
+          It may have been deleted, or the link is wrong.
+        </EmptyState>
       </div>
     );
   }
@@ -50,37 +53,44 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="space-y-4">
-      <Link href="/dashboard/projects" className="inline-flex min-h-12 items-center text-sm text-muted hover:text-ink">
-        ← Projects
-      </Link>
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        {renaming ? (
-          <div className="flex-1">
-            <ProjectForm
-              initialName={project.name}
-              submitLabel="Save"
-              onSubmit={(name) => {
-                renameProject(project.id, name);
-                setRenaming(false);
-              }}
-              onCancel={() => setRenaming(false)}
-            />
-          </div>
-        ) : (
-          <h1 className="break-words text-2xl tracking-tight">{project.name}</h1>
-        )}
-        {renaming ? null : (
-          <div className="flex shrink-0 gap-2">
-            <button type="button" onClick={() => setRenaming(true)} className={buttonClass("secondary")}>
-              Rename
-            </button>
-            <button type="button" onClick={onDelete} className={buttonClass("quiet")}>
-              Delete
-            </button>
-          </div>
-        )}
-      </header>
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <Link href="/dashboard/projects" variant="nav" className="gap-2 text-muted hover:text-ink">
+          <Icon name="arrow-left" />
+          All projects
+        </Link>
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          {renaming ? (
+            <div className="flex-1">
+              <ProjectForm
+                initialName={project.name}
+                submitLabel="Save"
+                onSubmit={(name) => {
+                  renameProject(project.id, name);
+                  setRenaming(false);
+                }}
+                onCancel={() => setRenaming(false)}
+              />
+            </div>
+          ) : (
+            <div className="min-w-0 space-y-2">
+              <Eyebrow>Project</Eyebrow>
+              <h1 className="break-words text-heading">{project.name}</h1>
+            </div>
+          )}
+          {renaming ? null : (
+            <div className="-ml-6 flex shrink-0 gap-1 sm:ml-0">
+              <Button variant="quiet" onClick={() => setRenaming(true)}>
+                Rename
+              </Button>
+              <Button variant="quiet" onClick={onDelete}>
+                <Icon name="trash" />
+                Delete
+              </Button>
+            </div>
+          )}
+        </header>
+      </div>
       <ProjectTabs projectId={project.id} />
       <div>{children}</div>
     </div>

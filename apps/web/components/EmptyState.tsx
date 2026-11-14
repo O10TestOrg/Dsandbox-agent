@@ -1,10 +1,22 @@
 import { Surface } from "./Surface";
 
-export function EmptyState({ title, children }: { title: string; children: React.ReactNode }) {
+/** One line of explanation and, at most, one clear action. Left-aligned. */
+export function EmptyState({
+  title,
+  children,
+  action,
+}: {
+  title: string;
+  children: React.ReactNode;
+  action?: React.ReactNode;
+}) {
   return (
-    <Surface className="p-8 text-center">
-      <h2 className="text-lg">{title}</h2>
-      <p className="mt-1 text-sm text-muted">{children}</p>
+    <Surface className="space-y-4 p-6 sm:p-8">
+      <div className="space-y-1">
+        <h2 className="text-body">{title}</h2>
+        <p className="text-body text-muted">{children}</p>
+      </div>
+      {action ? <div>{action}</div> : null}
     </Surface>
   );
 }

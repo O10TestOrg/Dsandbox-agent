@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="min-h-screen bg-paper text-ink">
       <DashboardNav name={name} appName={APP_NAME} />
       <main>
-        <Container className="space-y-4 py-6">
+        <Container className="space-y-8 py-8 md:py-12">
           <StorageNotice />
           {children}
         </Container>

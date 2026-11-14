@@ -1,14 +1,12 @@
 "use client";
 
 import { useActionState, useState, type FormEvent } from "react";
-import { buttonClass } from "./Button";
+import { Button } from "./Button";
+import { INPUT, LABEL } from "./field";
 import { SignalMessage } from "./Signal";
 import { demoSignIn, type AuthState } from "../app/(auth)/actions";
 
 type Mode = "sign-in" | "sign-up";
-
-const inputClass =
-  "mt-1 min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink";
 
 /** Demo form: any email and any non-empty password. The password is only checked here in the browser; it is never sent. */
 export function AuthForm({ mode }: { mode: Mode }) {
@@ -26,28 +24,26 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setClientError(null);
   }
 
+  const error = clientError ?? state?.error;
+
   return (
-    <form action={action} onSubmit={onSubmit} className="space-y-4">
-      <label className="block text-sm">
+    <form action={action} onSubmit={onSubmit} className="space-y-6">
+      <label className={LABEL}>
         Email
-        <input name="email" type="email" required autoComplete="off" className={inputClass} />
+        <input name="email" type="email" required autoComplete="off" className={INPUT} />
       </label>
-      <label className="block text-sm">
+      <label className={LABEL}>
         Password
-        <input id="pw" type="password" required autoComplete="off" className={inputClass} />
+        <input id="pw" type="password" required autoComplete="off" className={INPUT} />
       </label>
-      {clientError ?? state?.error ? (
+      {error ? (
         <SignalMessage tone="danger" role="alert">
-          {clientError ?? state?.error}
+          {error}
         </SignalMessage>
       ) : null}
-      <button
-        type="submit"
-        disabled={pending}
-        className={`w-full ${buttonClass("primary")}`}
-      >
-        {pending ? "Please wait…" : mode === "sign-up" ? "Create account" : "Sign in"}
-      </button>
+      <Button type="submit" loading={pending} className="w-full">
+        {pending ? "Signing in…" : mode === "sign-up" ? "Create account" : "Sign in"}
+      </Button>
     </form>
   );
 }

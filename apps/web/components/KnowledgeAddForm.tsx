@@ -2,11 +2,12 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import type { DemoKnowledgeSourceType } from "@askwell/shared";
-import { buttonClass } from "./Button";
+import { Button } from "./Button";
+import { INPUT, LABEL } from "./field";
+import { Eyebrow } from "./Text";
 import { SignalMessage } from "./Signal";
 import { FILE_ACCEPT, FILE_REJECTED_MESSAGE, parseSourceTitle, sourceTypeFromFileName } from "../lib/knowledge";
 
-const input = "mt-1 min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink";
 
 type Add = (source: { title: string; type: DemoKnowledgeSourceType }) => void;
 
@@ -41,42 +42,50 @@ export function KnowledgeAddForm({ onAdd }: { onAdd: Add }) {
     event.currentTarget.reset();
   }
 
+  // One primary action per view: adding text is the main path, a file is the alternative.
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <form onSubmit={addText} noValidate className="space-y-3">
-        <h2 className="">Paste text</h2>
-        <label className="block text-sm">
+    <div className="grid gap-10 md:grid-cols-2">
+      <form onSubmit={addText} noValidate className="space-y-6" aria-labelledby="add-text-heading">
+        <Eyebrow>
+          <span id="add-text-heading">Paste text</span>
+        </Eyebrow>
+        <label className={LABEL}>
           Title
-          <input name="title" type="text" autoComplete="off" className={input} />
+          <input name="title" type="text" autoComplete="off" className={INPUT} />
         </label>
-        <label className="block text-sm">
+        <label className={LABEL}>
           Text
-          <textarea name="text" rows={4} className={input} />
+          <textarea name="text" rows={4} className={INPUT} />
         </label>
         {textError ? (
           <SignalMessage tone="danger" role="alert">
             {textError}
           </SignalMessage>
         ) : null}
-        <button type="submit" className={buttonClass("primary")}>
-          Add text
-        </button>
+        <Button type="submit">Add text</Button>
       </form>
-      <form onSubmit={addFile} noValidate className="space-y-3">
-        <h2 className="">Upload a file</h2>
-        <label className="block text-sm">
+      <form onSubmit={addFile} noValidate className="space-y-6" aria-labelledby="add-file-heading">
+        <Eyebrow>
+          <span id="add-file-heading">Upload a file</span>
+        </Eyebrow>
+        <label className={LABEL}>
           File (.pdf, .md or .txt)
-          <input ref={fileRef} type="file" accept={FILE_ACCEPT} className={input} />
+          <input
+            ref={fileRef}
+            type="file"
+            accept={FILE_ACCEPT}
+            className={`${INPUT} file:mr-4 file:min-h-10 file:cursor-pointer file:rounded-pill file:border file:border-line file:bg-paper file:px-4 file:text-body file:text-ink`}
+          />
         </label>
-        <p className="text-sm text-muted">Only the file name is kept. The file is never read or uploaded.</p>
+        <p className="text-body text-muted">Only the file name is kept. The file is never read or uploaded.</p>
         {fileError ? (
           <SignalMessage tone="danger" role="alert">
             {fileError}
           </SignalMessage>
         ) : null}
-        <button type="submit" className={buttonClass("primary")}>
+        <Button type="submit" variant="secondary">
           Add file
-        </button>
+        </Button>
       </form>
     </div>
   );
