@@ -82,7 +82,7 @@ Pricing is display only: shown on the landing page and as labels in the dashboar
 
 | Item      | Detail                                                                 |
 | --------- | ---------------------------------------------------------------------- |
-| Sections  | Hero, how it works (3 steps), pricing (display only), footer           |
+| Sections  | Hero, how it works (3 steps), sample chat (seed data), pricing (display only), footer |
 | CTA       | "Try the demo" → sign in                                               |
 | Done when | Page is responsive; pricing matches §5; CTA opens sign in              |
 
@@ -90,11 +90,11 @@ Pricing is display only: shown on the landing page and as labels in the dashboar
 
 | Item       | Detail                                                                                          |
 | ---------- | ----------------------------------------------------------------------------------------------- |
-| Pages      | `/sign-in` and `/sign-up`, one centered glass card each                                          |
+| Pages      | `/sign-in` and `/sign-up`, one centered form each (see DESIGN.md)                                 |
 | Accepts    | Any email and any non-empty password. Nothing is checked or stored on a server.                  |
 | Session    | An `askwell_demo` cookie holding the display name (the part of the email before `@`). Not secret, not signed. |
 | Protection | `apps/web/proxy.ts` redirects to `/sign-in` without the cookie. Sign out clears it.              |
-| Notice     | The card says "Demo — any email and password work. Don't use a real password."                 |
+| Notice     | The form shows "Demo. Any email and password work. Don't use a real password."                  |
 | Done when  | Any login → dashboard; sign out → sign in; `/dashboard` without the cookie → sign in            |
 
 ### 6.3 Projects
