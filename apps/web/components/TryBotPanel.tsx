@@ -34,7 +34,7 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
       if (!result.ok) {
         setConversationId(null);
         setError(result.error);
-        setDraft(text);
+        setDraft((current) => (current === "" ? text : current));
       }
     } finally {
       setTyping(false);
