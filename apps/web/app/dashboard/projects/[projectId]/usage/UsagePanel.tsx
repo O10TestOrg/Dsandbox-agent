@@ -1,6 +1,8 @@
 "use client";
 
 import { PLAN_LIMITS } from "@askwell/shared";
+import { Notice } from "../../../../../components/Signal";
+import { Eyebrow, MetaText } from "../../../../../components/Text";
 import { Surface } from "../../../../../components/Surface";
 import { usagePercent } from "../../../../../lib/usage";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
@@ -17,31 +19,32 @@ export function UsagePanel({ projectId }: { projectId: string }) {
   const percent = usagePercent(used, FREE_LIMIT);
 
   return (
-    <Surface className="space-y-4 p-6">
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-sm text-muted">Messages this month</h2>
-        <p className="text-2xl tabular-nums">
-          {fmt.format(used)} / {fmt.format(FREE_LIMIT)}
-        </p>
-      </div>
-      <div
-        role="progressbar"
-        aria-label="Messages used this month"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={percent}
-        aria-valuetext={`${fmt.format(used)} of ${fmt.format(FREE_LIMIT)} messages`}
-        className="h-3 w-full overflow-hidden rounded-pill bg-line"
-      >
+    <div className="space-y-6">
+      <Surface className="space-y-6 p-6 sm:p-8">
+        <div className="space-y-2">
+          <Eyebrow>Messages this month</Eyebrow>
+          <p className="text-display tabular-nums">
+            {fmt.format(used)}
+            <span className="text-heading text-muted"> / {fmt.format(FREE_LIMIT)}</span>
+          </p>
+        </div>
         <div
-          className="h-full w-full origin-left bg-ink transition-transform motion-reduce:transition-none"
-          style={{ transform: `scaleX(${percent / 100})` }}
-        />
-      </div>
-      <p className="text-sm text-muted">
-        This project is on the Free plan. This is a demo: nothing is charged and no messages are blocked, even over the
-        limit.
-      </p>
-    </Surface>
+          role="progressbar"
+          aria-label="Messages used this month"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent}
+          aria-valuetext={`${fmt.format(used)} of ${fmt.format(FREE_LIMIT)} messages`}
+          className="h-2 w-full overflow-hidden rounded-square bg-line"
+        >
+          <div
+            className="h-full w-full origin-left bg-ink transition-transform motion-reduce:transition-none"
+            style={{ transform: `scaleX(${percent / 100})` }}
+          />
+        </div>
+        <MetaText className="block">{percent}% of the Free plan</MetaText>
+      </Surface>
+      <Notice>Demo. Nothing is charged and no messages are blocked, even over the limit.</Notice>
+    </div>
   );
 }

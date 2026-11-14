@@ -1,59 +1,110 @@
 "use client";
 
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useId, useRef, useState } from "react";
 import { demoSignOut } from "../app/(auth)/actions";
 import { useDemoStore } from "../lib/use-demo-store";
 import { buttonClass } from "./Button";
-import { Surface } from "./Surface";
+import { Container } from "./Container";
+import { Icon } from "./Icon";
+import { Link } from "./Link";
+import { MetaText } from "./Text";
 
-const LINKS = [
-  { href: "/dashboard/projects", label: "Projects" },
-];
+const LINKS = [{ href: "/dashboard/projects", label: "Projects" }];
 
-const small = `shrink-0 ${buttonClass("quiet")}`;
+const iconButton =
+  "inline-flex size-12 shrink-0 items-center justify-center rounded-pill text-ink transition-colors hover:bg-surface";
 
+/** Slim sticky header: wordmark left, text links, labelled icon actions right. One menu button on mobile. */
 export function DashboardNav({ name, appName }: { name: string; appName: string }) {
   const pathname = usePathname();
   const { reset } = useDemoStore();
+  const [open, setOpen] = useState(false);
+  const menuId = useId();
+  const toggle = useRef<HTMLButtonElement>(null);
+  const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+  // Close the mobile menu after navigating (adjusting state during render, not in an effect).
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpen(false);
+  }
+
+  // Escape closes the mobile menu and puts focus back on its button.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      toggle.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const actions = (
+    <>
+      <button type="button" onClick={reset} className={buttonClass("quiet")}>
+        <Icon name="reset" />
+        Reset demo
+      </button>
+      <form action={demoSignOut}>
+        <button type="submit" className={buttonClass("quiet")}>
+          <Icon name="sign-out" />
+          Sign out
+        </button>
+      </form>
+    </>
+  );
+
   return (
-    <header className="sticky top-0 z-10 p-3 sm:p-4">
-      <Surface className="flex flex-col gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="inline-flex min-h-12 items-center tracking-tight">
+    <header className="sticky top-0 z-10 border-b border-line bg-paper">
+      <Container className="flex min-h-16 items-center justify-between gap-4">
+        <div className="flex items-center gap-8">
+          <NextLink href="/dashboard" className="inline-flex min-h-12 items-center">
             {appName}
-          </Link>
-          <span className="truncate text-sm text-muted md:hidden">{name}</span>
-        </div>
-        <nav aria-label="Dashboard" className="-mx-1 flex gap-1 overflow-x-auto px-1">
-          {LINKS.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`inline-flex min-h-12 shrink-0 items-center rounded-square px-3 py-2 text-sm transition ${
-                  active ? "bg-ink text-paper" : "text-muted hover:text-ink"
-                }`}
-              >
+          </NextLink>
+          <nav aria-label="Dashboard" className="hidden gap-6 md:flex">
+            {LINKS.map((link) => (
+              <Link key={link.href} href={link.href} variant="nav" current={isCurrent(link.href)}>
                 {link.label}
               </Link>
-            );
-          })}
-        </nav>
-        <div className="flex items-center gap-2">
-          <span className="hidden max-w-40 truncate text-sm text-muted md:inline">{name}</span>
-          <button type="button" onClick={reset} className={small}>
-            Reset demo
-          </button>
-          <form action={demoSignOut}>
-            <button type="submit" className={small}>
-              Sign out
-            </button>
-          </form>
+            ))}
+          </nav>
         </div>
-      </Surface>
+        <div className="hidden items-center gap-1 md:flex">
+          <MetaText className="mr-2 max-w-40 truncate">{name}</MetaText>
+          {actions}
+        </div>
+        <button
+          ref={toggle}
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls={menuId}
+          aria-label={open ? "Close menu" : "Open menu"}
+          className={`${iconButton} md:hidden`}
+        >
+          <Icon name={open ? "close" : "menu"} />
+        </button>
+      </Container>
+      {open ? (
+        <div id={menuId} className="border-t border-line md:hidden">
+          <Container className="flex flex-col items-start gap-1 py-4">
+            <MetaText className="truncate">Signed in as {name}</MetaText>
+            <nav aria-label="Dashboard" className="flex flex-col">
+              {LINKS.map((link) => (
+                <Link key={link.href} href={link.href} variant="nav" current={isCurrent(link.href)}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="-ml-6 flex flex-col items-start">{actions}</div>
+          </Container>
+        </div>
+      ) : null}
     </header>
   );
 }

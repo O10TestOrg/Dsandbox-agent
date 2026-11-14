@@ -3,10 +3,11 @@
 import { useParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import type { DemoKnowledgeSourceStatus } from "@askwell/shared";
-import { buttonClass } from "../../../../../components/Button";
+import { Icon } from "../../../../../components/Icon";
 import { EmptyState } from "../../../../../components/EmptyState";
 import { StatusDot, type Tone } from "../../../../../components/Signal";
 import { Surface } from "../../../../../components/Surface";
+import { Eyebrow, MetaText } from "../../../../../components/Text";
 import { KnowledgeAddForm } from "../../../../../components/KnowledgeAddForm";
 import { msUntilReady } from "../../../../../lib/knowledge";
 import { useDemoStore } from "../../../../../lib/use-demo-store";
@@ -16,6 +17,12 @@ const TONE: Record<DemoKnowledgeSourceStatus, Tone | "neutral"> = {
   processing: "neutral",
   ready: "success",
   failed: "danger",
+};
+
+const STATUS_LABEL: Record<DemoKnowledgeSourceStatus, string> = {
+  processing: "Processing",
+  ready: "Ready",
+  failed: "Failed",
 };
 
 export default function KnowledgePage() {
@@ -35,25 +42,31 @@ export default function KnowledgePage() {
   }, [mine, setSourceStatus]);
 
   return (
-    <section className="space-y-6">
-      <h1 className="text-2xl tracking-tight">Knowledge</h1>
-      <Surface className="p-5">
+    <section className="space-y-10" aria-labelledby="knowledge-heading">
+      <div className="space-y-2">
+        <h2 id="knowledge-heading" className="text-heading">
+          Knowledge
+        </h2>
+        <p className="text-body text-muted">What your bot answers from.</p>
+      </div>
+      <Surface className="p-6 sm:p-8">
         <KnowledgeAddForm onAdd={(source) => addSource(projectId, source)} />
       </Surface>
       {mine.length === 0 ? (
-        <EmptyState title="No knowledge yet">Add text or a file and your bot can learn from it.</EmptyState>
+        <EmptyState title="No knowledge yet">Add text or a file above so your bot can answer.</EmptyState>
       ) : (
-        <ul className="space-y-3">
-          {mine.map((source) => (
-            <li key={source.id}>
-              <Surface className="flex items-center justify-between gap-3 p-4">
+        <div className="space-y-2">
+          <Eyebrow>Sources</Eyebrow>
+          <ul className="divide-y divide-line border-y border-line">
+            {mine.map((source) => (
+              <li key={source.id} className="flex items-center justify-between gap-3 py-3">
                 <div className="min-w-0">
-                  <p className="break-words">{source.title}</p>
-                  <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted">
-                    <span className="uppercase">{source.type}</span>
-                    <span className="inline-flex items-center gap-1.5 text-ink">
+                  <p className="break-words text-body">{source.title}</p>
+                  <p className="mt-1 flex flex-wrap items-center gap-3">
+                    <MetaText className="uppercase">{source.type}</MetaText>
+                    <span className="inline-flex items-center gap-1.5 text-caption text-ink">
                       <StatusDot tone={TONE[source.status]} />
-                      {source.status}
+                      {STATUS_LABEL[source.status]}
                     </span>
                   </p>
                 </div>
@@ -61,14 +74,14 @@ export default function KnowledgePage() {
                   type="button"
                   onClick={() => deleteSource(source.id)}
                   aria-label={`Delete ${source.title}`}
-                  className={`shrink-0 ${buttonClass("secondary")}`}
+                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-pill text-muted transition-colors hover:bg-surface hover:text-ink"
                 >
-                  Delete
+                  <Icon name="trash" />
                 </button>
-              </Surface>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </section>
   );

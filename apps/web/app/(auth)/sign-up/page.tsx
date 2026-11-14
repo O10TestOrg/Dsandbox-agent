@@ -14,14 +14,12 @@ export default async function SignUpPage() {
   if (await getDemoName()) redirect("/dashboard");
   return (
     <AuthCard
-      title="Create your account"
+      appName={APP_NAME}
+      title="Create account"
       subtitle={`Try the ${APP_NAME} demo.`}
       footer={
         <>
-          Already have an account?{" "}
-          <Link href="/sign-in" className="inline-flex min-h-12 items-center text-ink">
-            Sign in
-          </Link>
+          Have an account? <Link href="/sign-in">Sign in</Link>
         </>
       }
     >

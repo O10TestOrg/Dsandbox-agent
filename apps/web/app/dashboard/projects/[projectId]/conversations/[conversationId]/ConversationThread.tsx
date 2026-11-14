@@ -1,6 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Icon } from "../../../../../../components/Icon";
+import { Link } from "../../../../../../components/Link";
+import { MetaText } from "../../../../../../components/Text";
 import { EmptyState } from "../../../../../../components/EmptyState";
 import { formatTime } from "../../../../../../lib/conversations";
 import { useDemoStore } from "../../../../../../lib/use-demo-store";
@@ -11,35 +13,39 @@ export function ConversationThread({ projectId, conversationId }: { projectId: s
   const conversation = conversations.find((c) => c.id === conversationId && c.projectId === projectId);
 
   return (
-    <section className="space-y-4">
-      <Link href={back} className="inline-flex min-h-12 items-center text-sm text-muted underline-offset-4 hover:underline">
-        ← Back to conversations
+    <section className="space-y-8">
+      <Link href={back} variant="nav" className="gap-2 text-muted hover:text-ink">
+        <Icon name="arrow-left" />
+        All conversations
       </Link>
       {!conversation ? (
-        <EmptyState title="Conversation not found">
-          It may have been deleted. <Link href={back} className="underline underline-offset-4">Back to conversations</Link>
-        </EmptyState>
+        <EmptyState title="Conversation not found">It may have been deleted, or the link is wrong.</EmptyState>
       ) : (
         <>
-          <h1 className="text-2xl tracking-tight">Conversation</h1>
+          <div className="space-y-2">
+            <h2 className="text-heading">Conversation</h2>
+            <MetaText>
+              Started <time dateTime={conversation.createdAt}>{formatTime(conversation.createdAt)}</time>
+            </MetaText>
+          </div>
           {conversation.messages.length === 0 ? (
             <EmptyState title="No messages">This conversation is empty.</EmptyState>
           ) : (
-            <ol className="space-y-3">
+            <ol className="space-y-4">
               {conversation.messages.map((m) => {
                 const visitor = m.role === "visitor";
                 return (
-                  <li key={m.id} className={`flex flex-col ${visitor ? "items-start" : "items-end"}`}>
-                    <div
-                      className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-sm ${
-                        visitor ? "border border-line bg-surface" : "bg-ink text-paper"
+                  <li key={m.id} className={`flex flex-col gap-1 ${visitor ? "items-start" : "items-end"}`}>
+                    <p
+                      className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-body ${
+                        visitor ? "bg-surface" : "bg-ink text-paper"
                       }`}
                     >
                       {m.body}
-                    </div>
-                    <span className="mt-1 px-1 text-xs text-muted">
+                    </p>
+                    <MetaText>
                       {visitor ? "Visitor" : "Bot"} · <time dateTime={m.createdAt}>{formatTime(m.createdAt)}</time>
-                    </span>
+                    </MetaText>
                   </li>
                 );
               })}

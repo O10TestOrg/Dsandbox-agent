@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { buttonClass } from "./Button";
+import { useId, useState, type FormEvent } from "react";
+import { Button } from "./Button";
+import { INPUT } from "./field";
 import { SignalMessage } from "./Signal";
 import { parseProjectName } from "../lib/project-name";
 
-/** One name field with a submit button. Used for "New project" and "Rename". The name renders as text only. */
+/** One name field with a submit button. Used for "Add project" and "Rename". The name renders as text only. */
 export function ProjectForm({
   initialName = "",
   submitLabel,
@@ -18,6 +19,7 @@ export function ProjectForm({
   onCancel?: () => void;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const id = useId();
 
   function handle(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,44 +35,37 @@ export function ProjectForm({
   }
 
   return (
-    <form onSubmit={handle} className="flex flex-col gap-2 sm:flex-row sm:items-start" noValidate>
-      <div className="flex-1">
-        <label className="sr-only" htmlFor={`project-name-${submitLabel}`}>
-          Project name
-        </label>
+    <form onSubmit={handle} noValidate className="space-y-2">
+      <label className="block text-body" htmlFor={id}>
+        Project name
+      </label>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
         <input
-          id={`project-name-${submitLabel}`}
+          id={id}
           name="name"
           type="text"
           defaultValue={initialName}
-          placeholder="Project name"
           autoComplete="off"
           aria-invalid={error ? true : undefined}
-          className="min-h-12 w-full rounded-square border border-line bg-transparent px-3 py-2.5 text-ink"
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={`${INPUT} sm:flex-1`}
         />
-        {error ? (
-          <SignalMessage tone="danger" role="alert" className="mt-1">
+        <div className="flex gap-2">
+          <Button type="submit">{submitLabel}</Button>
+          {onCancel ? (
+            <Button variant="quiet" onClick={onCancel}>
+              Cancel
+            </Button>
+          ) : null}
+        </div>
+      </div>
+      {error ? (
+        <div id={`${id}-error`}>
+          <SignalMessage tone="danger" role="alert">
             {error}
           </SignalMessage>
-        ) : null}
-      </div>
-      <div className="flex gap-2">
-        <button
-          type="submit"
-          className={buttonClass("primary")}
-        >
-          {submitLabel}
-        </button>
-        {onCancel ? (
-          <button
-            type="button"
-            onClick={onCancel}
-            className={buttonClass("quiet")}
-          >
-            Cancel
-          </button>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </form>
   );
 }

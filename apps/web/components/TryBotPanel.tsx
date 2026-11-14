@@ -4,7 +4,12 @@ import { useState } from "react";
 import { DEMO_MESSAGE_MAX_CHARS } from "@askwell/shared";
 import { sendMessage, suggestedQuestions, validateMessage } from "../lib/try-bot";
 import { useDemoStore } from "../lib/use-demo-store";
-import { buttonClass } from "./Button";
+import { Button } from "./Button";
+import { EmptyState } from "./EmptyState";
+import { INPUT } from "./field";
+import { Icon } from "./Icon";
+import { SignalMessage } from "./Signal";
+import { MetaText } from "./Text";
 import { Surface } from "./Surface";
 
 export function TryBotPanel({ projectId }: { projectId: string }) {
@@ -51,39 +56,35 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
   }
 
   if (!project) {
-    return (
-      <Surface className="p-8 text-center">
-        <h2 className="text-lg">Project not found</h2>
-        <p className="mt-1 text-sm text-muted">It may have been deleted.</p>
-      </Surface>
-    );
+    return <EmptyState title="Project not found">It may have been deleted.</EmptyState>;
   }
 
+  const tooLong = over ? `Too long. Keep it under ${DEMO_MESSAGE_MAX_CHARS} characters.` : null;
+  const shownError = error ?? tooLong;
+
   return (
-    <Surface className="flex flex-col">
-      <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-3">
-        <p className="min-w-0 truncate text-sm text-muted">Chatting with {project.name}</p>
-        <button
-          type="button"
-          onClick={newChat}
-          disabled={typing}
-          className={`shrink-0 ${buttonClass("secondary")}`}
-        >
-          New chat
-        </button>
+    <Surface bordered className="flex flex-col">
+      <div className="flex flex-col items-start gap-1 border-b border-line py-2 pl-5 pr-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        <MetaText className="min-w-0 max-w-full truncate pt-2 sm:pt-0">
+          Chatting with <strong>{project.name}</strong>
+        </MetaText>
+        <Button variant="quiet" onClick={newChat} disabled={typing} className="-ml-6 shrink-0 sm:ml-0">
+          <Icon name="plus" />
+          New conversation
+        </Button>
       </div>
 
-      <div className="min-h-64 flex-1 space-y-3 px-5 py-4" aria-live="polite">
+      <div className="min-h-64 flex-1 space-y-3 px-5 py-6" aria-live="polite">
         {messages.length === 0 && !typing ? (
-          <div className="space-y-3 py-6 text-center">
-            <p className="text-sm text-muted">Ask a question to try your bot. Try one of these:</p>
-            <div className="flex flex-wrap justify-center gap-2">
+          <div className="space-y-4">
+            <p className="text-body text-muted">Ask a question, or try one of these.</p>
+            <div className="flex flex-wrap gap-2">
               {suggestedQuestions(projectId).map((q) => (
                 <button
                   key={q}
                   type="button"
                   onClick={() => setDraft(q)}
-                  className="min-h-12 rounded-pill border border-line px-3 py-1.5 text-sm hover:bg-surface"
+                  className="min-h-12 rounded-pill border border-line px-4 text-left text-body transition-colors hover:bg-surface"
                 >
                   {q}
                 </button>
@@ -95,25 +96,26 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
             const visitor = m.role === "visitor";
             return (
               <div key={m.id} className={`flex ${visitor ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-sm ${
-                    visitor ? "bg-ink text-paper" : "border border-line bg-surface"
+                <p
+                  className={`max-w-[85%] whitespace-pre-wrap break-words rounded-square px-4 py-2.5 text-body ${
+                    visitor ? "bg-ink text-paper" : "bg-surface"
                   }`}
                 >
+                  <span className="sr-only">{visitor ? "You: " : "Bot: "}</span>
                   {m.body}
-                </div>
+                </p>
               </div>
             );
           })
         )}
         {typing && (
           <div className="flex justify-start">
-            <div className="rounded-square border border-line bg-surface px-4 py-2.5 text-sm text-muted">
+            <p className="rounded-square bg-surface px-4 py-2.5 text-body text-muted">
               <span className="sr-only">The bot is typing</span>
-              <span aria-hidden="true" className="animate-pulse motion-reduce:animate-none">
+              <span aria-hidden="true" className="animate-pulse motion-reduce:animate-[pulse_3s_ease-in-out_infinite]">
                 …
               </span>
-            </div>
+            </p>
           </div>
         )}
       </div>
@@ -125,10 +127,10 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
           void send();
         }}
       >
+        <label className="block text-body" htmlFor="try-bot-input">
+          Your message
+        </label>
         <div className="flex gap-2">
-          <label className="sr-only" htmlFor="try-bot-input">
-            Your message
-          </label>
           <input
             id="try-bot-input"
             value={draft}
@@ -136,25 +138,24 @@ export function TryBotPanel({ projectId }: { projectId: string }) {
               setDraft(e.target.value);
               setError(null);
             }}
-            placeholder="Ask your bot something…"
             autoComplete="off"
-            className="min-h-12 min-w-0 flex-1 rounded-square border border-line bg-surface px-3 py-2 text-sm"
+            aria-invalid={shownError ? true : undefined}
+            aria-describedby="try-bot-count"
+            className={`${INPUT} min-w-0 flex-1`}
           />
-          <button
-            type="submit"
-            disabled={typing || !valid}
-            className={`shrink-0 ${buttonClass("primary")}`}
-          >
-            Send
-          </button>
+          <Button type="submit" disabled={!valid} loading={typing} aria-label="Send" className="shrink-0">
+            <Icon name="send" />
+          </Button>
         </div>
-        <div className="flex justify-between gap-3 text-xs">
-          <p role="alert" className="text-danger">
-            {error ?? (over ? `Too long: at most ${DEMO_MESSAGE_MAX_CHARS} characters.` : "")}
-          </p>
-          <p className={over ? "text-danger" : "text-muted"}>
-            {length}/{DEMO_MESSAGE_MAX_CHARS}
-          </p>
+        <div className="flex items-start justify-between gap-3">
+          <div role="alert" className="min-w-0">
+            {shownError ? <SignalMessage tone="danger">{shownError}</SignalMessage> : null}
+          </div>
+          <MetaText className={over ? "text-ink" : ""}>
+            <span id="try-bot-count">
+              {length}/{DEMO_MESSAGE_MAX_CHARS}
+            </span>
+          </MetaText>
         </div>
       </form>
     </Surface>
