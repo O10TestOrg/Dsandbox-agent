@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   DEMO_CONVERSATIONS,
   DEMO_KNOWLEDGE_SOURCES,
-  DEMO_MESSAGE_MAX_CHARS,
   DEMO_PROJECTS,
   DEMO_UNKNOWN_REPLY,
   getScriptedReply,
@@ -30,13 +29,17 @@ describe("getScriptedReply", () => {
     );
   });
 
+  it("matches whole words only, not substrings", () => {
+    expect(getScriptedReply(coffee, "Do you have a boat?")).toBe(DEMO_UNKNOWN_REPLY);
+  });
+
   it("says it doesn't know for an unknown project", () => {
     expect(getScriptedReply("nope", "opening hours?")).toBe(DEMO_UNKNOWN_REPLY);
   });
 
-  it("answers at least one question for every sample project", () => {
+  it("answers a question for every sample project", () => {
     const answers = DEMO_PROJECTS.map((p) => getScriptedReply(p.id, "price"));
-    expect(answers.some((a) => a !== DEMO_UNKNOWN_REPLY)).toBe(true);
+    expect(answers.every((a) => a !== DEMO_UNKNOWN_REPLY)).toBe(true);
   });
 });
 
@@ -74,7 +77,4 @@ describe("seed integrity", () => {
     expect(unique(DEMO_CONVERSATIONS.flatMap((c) => c.messages.map((m) => m.id)))).toBe(true);
   });
 
-  it("caps messages at 1000 characters", () => {
-    expect(DEMO_MESSAGE_MAX_CHARS).toBe(1000);
-  });
 });
